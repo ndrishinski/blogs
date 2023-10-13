@@ -1,0 +1,104 @@
+{{ 'toaster-css.css' | asset_url | stylesheet_tag }}
+
+  <div style="min-height: 250px; display: flex; justify-content: center; align-items: center;">
+  <div class="rotater rotater--top"></div>
+  <input id="toast" type="checkbox" />
+  <!-- <div class="rotater rotater--top"></div> -->
+  <div class="rotater rotater--right"></div>
+  <!-- <div class="rotater rotater--bottom"></div> -->
+  <div class="rotater rotater--left"></div>
+  <div class="scene">
+    <div class="plane">
+      <div class="cube table">
+        <div class="cube__side"></div>
+        <div class="cube__side"></div>
+        <div class="cube__side"></div>
+        <div class="cube__side"></div>
+        <div class="cube__side"></div>
+        <div class="cube__side"></div>
+      </div>
+      <div class="toaster__shadow"></div>
+      <label class="toaster" for="toast">
+        <div class="toast__wrapper">
+          <div class="cube toast">
+            <div class="cube__side"></div>
+            <div class="cube__side">
+              <div class="toast__face">
+                <div class="eyes">
+                  <div class="eye eye--left"></div>
+                  <div class="eye eye--right"></div>
+                </div>
+                <div class="mouth"></div>
+              </div>
+            </div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+        </div>
+        <div class="toaster__toaster">
+          <div class="cube toaster__leg toaster__leg--tl">
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+          <div class="cube toaster__leg toaster__leg--tr">
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+          <div class="cube toaster__leg toaster__leg--br">
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+          <div class="cube toaster__leg toaster__leg--bl">
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+          <div class="cube toaster__body">
+            <div class="cube__side">
+              <div class="toaster__face">
+                <div class="eyes">
+                  <div class="eye eye--left"></div>
+                  <div class="eye eye--right"></div>
+                </div>
+                <div class="mouth"></div>
+              </div>
+            </div>
+            <div class="cube__side"></div>
+            <div class="cube__side">
+              <div class="cube toaster__handle">
+                <div class="cube__side"></div>
+                <div class="cube__side"></div>
+                <div class="cube__side"></div>
+                <div class="cube__side"></div>
+                <div class="cube__side"></div>
+                <div class="cube__side"></div>
+              </div>
+            </div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+            <div class="cube__side"></div>
+          </div>
+        </div>
+      </label>
+    </div>
+  </div>
+  <div class="rotater rotater--bottom"></div>
+  <label class="cloak" for="toast"></label>
+</div>

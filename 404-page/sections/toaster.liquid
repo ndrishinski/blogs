@@ -1,0 +1,45 @@
+<div style="display: flex; width: 100%; justify-content: center; align-items: center; flex-direction: column">
+  <h1>{{ section.settings.mainHeading }}</h1>
+  <h2>{{ section.settings.heading }}</h2>
+</div>
+{%- render 'toaster' -%}
+<div style="display: flex; width: 100%; justify-content: center; align-items: center;">
+  <a href="{{ routes.all_products_collection_url }}" class="button" style="color: white">
+    {{ section.settings.buttonText }}
+  </a>
+</div>
+{% schema %}
+  {
+    "name": "Toaster",
+    "settings": [
+      {
+      "type": "text",
+      "id": "heading",
+      "label": "Toaster Heading",
+      "info": "Text you would like to display above",
+      "default": "Oops, this page is TOAST"
+      },
+      {
+        "type": "text",
+        "id": "mainHeading",
+        "label": "Main Heading",
+        "info": "Main Heading Text",
+        "default": "404"
+      },
+      {
+        "type": "text",
+        "id": "buttonText",
+        "label": "Button Text",
+        "info": "Button Text",
+        "default": "Let's Get Back"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
+
