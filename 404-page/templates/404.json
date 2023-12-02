@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "toaster": {
+      "type": "toaster",
+      "settings": {
+        "heading": "Oops, this page is TOAST",
+        "mainHeading": "404",
+        "buttonText": "Back to Civilization"
+      }
+    },
+    "main": {
+      "type": "main-404",
+      "disabled": true,
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "toaster",
+    "main"
+  ]
+}
