@@ -1,0 +1,8 @@
+</head>
+<body>
+  ....
+
+  {%- if settings.cart_type == 'drawer' -%}
+    {% section 'free-shipping-countdown' %} <!-- add this line here -->
+    {%- render 'cart-drawer' -%}
+  {%- endif -%}
