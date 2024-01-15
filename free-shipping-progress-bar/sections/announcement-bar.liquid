@@ -164,25 +164,6 @@
           const threshold = {{ settings.free-shipping-countdown }} || 0
           this.updateProgressBar(0, threshold, true);
           this.initEventListeners();
-          this.render();
-      }
-  
-      render() {
-          const container = document.createElement('div');
-          container.classList.add('free-shipping-progress-bar-container');
-  
-          const progressBar = document.createElement('div');
-          progressBar.classList.add('free-shipping-progress-bar');
-          progressBar.id = 'progress-bar';
-  
-          const progressText = document.createElement('div');
-          progressText.classList.add('free-shipping-progress-text');
-          progressText.id = 'progress-text';
-  
-          container.appendChild(progressBar);
-          container.appendChild(progressText);
-  
-          this.shadowRoot.appendChild(container);
       }
   }
   customElements.define('free-shipping-progress-bar', FreeShippingProgressBar);
