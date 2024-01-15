@@ -1,0 +1,14 @@
+{
+  "current": {
+    ...
+    "free-shipping-countdown": "1111",
+...
+  "presets": {
+    "Default": {
+      ...
+      "free-shipping-countdown": "",
+      ...
+    }
+  }
+}
+}

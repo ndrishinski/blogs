@@ -1,0 +1,20 @@
+...
+    async updateFreeShippingCountdown() {
+      const cart = await this.getShopifyCart();
+      const threshold = {{ settings.free-shipping-countdown }} || 0 // Default to 0 if not provided
+      if (threshold <= 0) return
+      const cartTotal = cart.total_price / 100
+      const amountUntilFreeShipping = threshold - (cart.total_price / 100);
+
+      const cartEvent = new CustomEvent('cartUpdated:results', {'detail': {
+        cartTotal: cartTotal.toFixed(2),
+        threshold: threshold
+      }});
+      document.dispatchEvent(cartEvent);
+
+      let str = amountUntilFreeShipping > 0 ? `
+        <p>$${amountUntilFreeShipping.toFixed(2)} amount until you hit free shipping</p>
+      ` : `<p>Congratulations, you have reached free shipping!</p>`
+      this.shadowRoot.innerHTML = str
+    }
+...

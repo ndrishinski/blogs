@@ -1,0 +1,11 @@
+[
+...
+      {
+        "type": "text",
+        "id": "free-shipping-countdown",
+        "label": "Free Shipping Threshold",
+        "info": "The amount in $ at which you offer free shipping"
+      }
+    ]
+  }
+]
