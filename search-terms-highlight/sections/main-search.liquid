@@ -1,0 +1,11 @@
+...
+{% render 'card-product',
+  card_product: item,
+  media_aspect_ratio: section.settings.image_ratio,
+  show_secondary_image: section.settings.show_secondary_image,
+  show_vendor: section.settings.show_vendor,
+  show_rating: section.settings.show_rating,
+  lazy_load: lazy_load,
+  search_by: search.terms
+%}
+...
