@@ -1,0 +1,12 @@
+{
+    "sections": {
+      "nicks-custom-banner": {
+        "type": "custom-banner"
+      },
+      ...
+    },
+    "order": [
+      "nicks-custom-banner",
+      "featured_collection"
+    ]
+  }
