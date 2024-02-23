@@ -46,9 +46,27 @@
     {%- endcomment -%}
     <div class="price__regular">
       <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
-      <span class="price-item price-item--regular">
-        {{ money_price }}
-      </span>
+      {% if request.path contains 'products/' %}
+        {% assign showPromo = false %}
+      {% else %}
+        {% assign showPromo = true %} 
+      {% endif %}
+      
+      {% if settings.promo-tag-enabled and product.tags contains settings.promo-tag and showPromo%}
+        <span class="price-item price-item--regular" style="text-decoration: line-through; color: red;">
+          {{ price | money }}
+        </span>
+        <p style="margin: 0px; padding: 0px;">
+          <span class="price-item price-item--regular">
+          {% assign discount = 1 | minus: settings.promo-percent %}
+            {{ price | times: discount | money }} with code: {{ settings.promo-code }}
+          </span>
+        </p>
+      {% else %}
+        <span class="price-item price-item--regular">
+          {{ money_price }}
+        </span>
+      {% endif %}
     </div>
     <div class="price__sale">
       {%- unless product.price_varies == false and product.compare_at_price_varies %}
