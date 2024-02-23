@@ -1,0 +1,41 @@
+[
+    {
+      "name": "theme_info",
+      "theme_name": "Dawn",
+      "theme_version": "8.0.0",
+      "theme_author": "Shopify",
+      "theme_documentation_url": "https:\/\/help.shopify.com\/manual\/online-store\/themes",
+      "theme_support_url": "https:\/\/support.shopify.com\/"
+    },
+    {
+      "name": "Promo Code by Tag",
+      "settings": [
+        {
+          "type": "checkbox",
+          "label": "Check to enable promo code tags",
+          "id": "promo-tag-enabled"
+        },
+        {
+          "type": "text",
+          "label": "Enter tag to show promo code",
+          "id": "promo-tag"
+        },
+        {
+          "type": "text",
+          "label": "Enter promo code",
+          "id": "promo-code"
+        },
+        {
+          "type": "range",
+          "id": "promo-percent",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "default": 0,
+          "label": "Discount % in decimal"
+        }
+      ]
+    },
+    {
+      "name": "t:settings_schema.logo.name",
+      "settings": [
