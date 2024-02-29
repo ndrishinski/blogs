@@ -1,0 +1,22 @@
+...
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{% if product.tags contains 'invoice' %}{% comment %} add here  {% endcomment %}
+  {% assign show_invoice = true %}
+{% else %}
+  {% assign show_invoice = false %}
+{% endif %}
+...
+{%- when 'quantity_selector' -%}
+  {% unless show_invoice %} {% comment %} add here  {% endcomment %}
+    ...
+  {% endunless %} {% comment %} add here  {% endcomment %}
+{%- when 'popup' -%}
+  ...
+  {%- when 'variant_picker' -%}
+    {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+  {%- when 'buy_buttons' -%}  
+  {% if show_invoice %}{% comment %} add here  {% endcomment %}
+    {% render 'product-invoice-form', product: product %}
+  {% else %}
+    {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
+  {% endif %}

@@ -1,0 +1,136 @@
+{% style %}
+  /* Container styles */
+  .contact-form {
+    max-width: 100%;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+  }
+
+  /* Grid styles */
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .grid__item {
+    flex: 1 0 50%; /* Two columns on medium screens */
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* Input styles */
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  /* Label styles */
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  /* Button styles */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  /* Success message styles */
+  .note--success {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+{% endstyle %}
+
+<div class="contact-form form-vertical pcf-ui">
+  {%- assign formId = 'ContactForm' -%}
+  {% form 'contact', id: formId %}
+    <div class="grid grid--half-gutters">
+      <p>Because of large demand, we require an invoice request for this product.</p>
+      <div class="grid__item medium-up--one-half">
+        <label for="{{ formId }}-name">Name <span aria-hidden="true">*</span></label>
+        <input
+          type="text"
+          id="{{ formId }}-name"
+          name="contact[Name]"
+          value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}"
+        >
+      </div>
+      <div class="grid__item medium-up--one-half">
+        <label for="{{ formId }}-email">Email <span aria-hidden="true">*</span></label>
+        <input
+          type="email"
+          id="{{ formId }}-email"
+          name="contact[email]"
+          autocorrect="off"
+          autocapitalize="off"
+          value="{{ form[email] }}"
+          aria-required="true"
+          {%- if form.errors contains 'email' -%}
+            class="input--error"
+            aria-invalid="true"
+            aria-describedby="{{ formId }}-email-error"
+          {%- endif -%}
+        >
+      </div>
+    </div>
+
+    <div class="grid grid--half-gutters">
+      <div class="grid__item medium-up--one-half">
+        <label for="{{ formId }}-phone">Phone</label>
+        <input
+          type="tel"
+          id="{{ formId }}-phone"
+          name="contact[Phone]"
+          pattern="[0-9\-]*"
+          value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+        >
+      </div>
+      <div class="grid__item medium-up--one-half">
+        <label for="{{ formId }}-quantity">Quantity</label>
+        <input
+          type="tel"
+          id="{{ formId }}-quantity"
+          name="contact[Quantity]"
+          value="{% if form[quantity] %}{{ form[quantity] }}{% else %}1{% endif %}"
+        >
+      </div>
+    </div>
+
+    {% if form.posted_successfully? %}
+      <p class="note note--success">We have received your submission and will reach out to you soon!</p>
+    {% endif %}
+
+    {{ form.errors | default_errors }}
+    <input
+      style="visibility: hidden; height: 1px;"
+      type="product"
+      id="{{ formId }}-product"
+      name="contact[Invoice Submitted]"
+      value="{{ product.title }}"
+    >
+    <input type="submit" class="btn" value="SUBMIT INVOICE" style="margin-top: -35px">
+  {% endform %}
+</div>
