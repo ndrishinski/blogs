@@ -1,0 +1,23 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+      const path = "{{ request.path }}"
+      if (path != "/") {
+        window.location.href = "/"
+      }
+    </script>
+  </head>
+  <body>
+    <div style="display: none;">
+      {{ content_for_header }}
+    </div>
+    {{ content_for_layout }}
+  </body>
+</html>

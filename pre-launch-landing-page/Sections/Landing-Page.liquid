@@ -1,0 +1,399 @@
+<style>
+  html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Quicksand:400,300,700);
+
+html,
+body {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #1c1c1c;
+    font-family: "Quicksand", sans-serif;
+
+    form.form {
+      color: #fff;
+      font-family: "Quicksand", sans-serif;
+      margin: 10px;
+      
+    }
+
+    form.form input.input-email {
+      background-color: #1c1c1c;
+      border: 1px solid #e6dbae;
+      border-radius: 10px;
+      height: 27px;
+      color: #fff;
+      padding-left: 10px;
+    }
+
+    form.form input:focus{
+      outline: none;
+    }
+
+    form.form input.btn-submit {
+      background-color: #1c1c1c;
+      border: 1px solid #e6dbae;
+      border-radius: 10px;
+      color: #e6dbae;
+      margin-left: 5px;
+      padding: 5px;
+      box-sizing: content-box;
+    }
+
+    #background {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -100;
+        -webkit-transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
+        background: url(polina.jpg) no-repeat;
+        background-size: cover;
+        overflow: hidden;
+        -webkit-filter: blur(5px);
+        -moz-filter: blur(5px);
+        -o-filter: blur(5px);
+        -ms-filter: blur(5px);
+        filter: blur(5px);
+    }
+
+    .main {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        margin: 0 auto;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.5);
+
+        #content {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 24px;
+            height: 100%;
+            position: relative;
+            text-align: center;
+            top: 33%;
+
+            .title {
+                color: white;
+                font-family: "Quicksand", sans-serif;
+                font-size: 4rem;
+                text-transform: uppercase;
+                padding-bottom: 0px;
+                margin-bottom: 0px;
+
+                span {
+                    font-size: 4rem;
+                    cursor: pointer;
+                }
+
+                &:hover {
+                    -webkit-animation: MISSION-HOVER 1.5s infinite;
+                    -moz-animation: MISSION-HOVER 1.5s infinite;
+                    -o-animation: MISSION-HOVER 1.5s infinite;
+                    animation: MISSION-HOVER 1.5s infinite;
+                    animation-direction: alternate;
+                    animation-timing-function: ease;
+                }
+
+                @-webkit-keyframes MISSION-HOVER {
+
+                    0%,
+                    100% {
+                        font-size: 4rem;
+                        color: white;
+                    }
+
+                    50% {
+                        color: #bffcff;
+                        letter-spacing: 5px;
+                        text-shadow: 0px 0px 30px rgba(191, 252, 255, 1);
+                    }
+                }
+            }
+
+            p {
+                color: #e6dbae;
+                font-family: "Quicksand", sans-serif;
+                font-size: 1.5rem;
+                margin: 0 auto;
+                padding: 0;
+                letter-spacing: 0.5rem;
+                text-transform: uppercase;
+
+                &:last-child {
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    margin: 3em auto;
+                    padding: 0;
+                    letter-spacing: 0.1rem;
+
+                    >a {
+                        text-decoration: none;
+                        color: inherit;
+                        -moz-transition: all 0.2s ease-in;
+                        -o-transition: all 0.2s ease-in;
+                        -webkit-transition: all 0.2s ease-in;
+                        transition: all 0.2s ease-in;
+
+                        &:hover {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+
+            section {
+                color: #fff;
+                margin: 0 auto;
+                line-height: 24px;
+                font-size: 1rem;
+                font-weight: 700;
+
+                ul {
+                    list-style-type: none;
+                    margin-bottom: 0;
+                    margin-left: 0;
+
+                    li {
+                        display: inline-block;
+                        margin-right: 2rem;
+                        width: 6rem;
+                    }
+                }
+
+                .timenumbers {
+                    display: block;
+                    font-size: 1.3rem;
+                    font-weight: 400;
+                    line-height: 1.5rem;
+                    margin: 0 auto;
+                    text-align: center;
+                }
+
+                p.timedescription {
+                    font-size: 0.5rem;
+                    font-variant: small-caps;
+                    line-height: 1.5rem;
+                    margin: 0 auto;
+                    text-align: center;
+                    position: relative;
+                    top: 0px;
+                }
+            }
+        }
+    }
+}
+</style>
+
+<video autoplay loop muted poster="screenshot.jpg" id="background">
+  <!-- External resources removed by CodePen support due to server authentication access restrictions -->
+<!--         <source type="video/mp4" src="https://staging.coverr.co/s3/mp4/Boxing-gym.mp4">
+        <source type="video/webm" src="https://staging.coverr.co/s3/webm/Boxing-gym.webm"> -->
+</video>
+<div class="main">
+  <div id='content'>
+    <div class='title'>
+      <span>NICK'S SHOP</span>
+    </div>
+    <p>coming soon</p>
+    <section>
+      <ul id="countdown">
+        <li><span class="days timenumbers">01</span>
+          <p class="timeRefDays timedescription">days</p>
+        </li>
+        <li><span class="hours timenumbers">00</span>
+          <p class="timeRefHours timedescription">hours</p>
+        </li>
+        <li><span class="minutes timenumbers">00</span>
+          <p class="timeRefMinutes timedescription">minutes</p>
+        </li>
+        <li><span class="seconds timenumbers yellow-text">00</span>
+          <p class="timeRefSeconds timedescription">seconds</p>
+        </li>
+      </ul>
+    </section>
+    {%- assign formId = 'ContactForm' -%}
+    {% form 'contact', id: formId, class: 'form' %}
+      <div>
+        {% if form.posted_successfully? %}
+        
+        <p style="font-size: 1rem; letter-spacing: 0; text-transform: none;" class="note note--success">We have received your submission and will reach out to you soon!</p>
+        {% else %}
+        <p style="font-size: 1rem; letter-spacing: 0; text-transform: none;">Become the first to know. Enter your email to stay up to date.</p>
+        <input
+          style="visibility: hidden; height: 1px;"
+          type="product"
+          id="{{ formId }}-product"
+          name="contact[Invoice Submitted]"
+          value="Pre-Launch Email Registration"
+        >
+        {% endif %}
+      </div>
+      <div class="grid__item medium-up--one-half" style="display: flex; justify-content: center;">
+        <input
+            type="email"
+            id="{{ formId }}-email"
+            name="contact[email]"
+            autocorrect="off"
+            autocapitalize="off"
+            value="{{ form[email] }}"
+            aria-required="true"
+            class="input-email"
+            placeholder="Email"
+            {%- if form.errors contains 'email' -%}
+              class="input--error"
+              aria-invalid="true"
+              aria-describedby="{{ formId }}-email-error"
+            {%- endif -%}
+          >
+        <input type="submit" class="btn-submit" value="Submit">
+      </div>
+      {{ form.errors | default_errors }}
+    {% endform %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Section name",
+    "settings": []
+  }
+{% endschema %}
+
+<script>
+  (function($) {
+    $.fn.countdown = function(options, callback) {
+        //custom 'this' selector
+        thisEl = $(this);
+
+        // array of custom settings
+        var settings = {
+            'date': null,
+            'format': null
+        };
+
+        // append the settings array to options
+        if (options) {
+            $.extend(settings, options);
+        }
+
+        //create the countdown processing function
+        function countdown_proc() {
+            var eventDate = Date.parse(settings.date) / 1000;
+
+            var currentDate = Math.floor($.now() / 1000);
+
+            if (eventDate <= currentDate) {
+                callback.call(this);
+                clearInterval(interval);
+            }
+
+            var seconds = eventDate - currentDate;
+
+            var days = Math.floor(seconds / (60 * 60 * 24));
+            //calculate the number of days
+
+            seconds -= days * 60 * 60 * 24;
+            //update the seconds variable with number of days removed
+
+            var hours = Math.floor(seconds / (60 * 60));
+            seconds -= hours * 60 * 60;
+            //update the seconds variable with number of hours removed
+
+            var minutes = Math.floor(seconds / 60);
+            seconds -= minutes * 60;
+            //update the seconds variable with number of minutes removed
+
+            //conditional statements
+            if (days == 1) { thisEl.find(".timeRefDays").text("day"); } else { thisEl.find(".timeRefDays").text("days"); }
+            if (hours == 1) { thisEl.find(".timeRefHours").text("hour"); } else { thisEl.find(".timeRefHours").text("hours"); }
+            if (minutes == 1) { thisEl.find(".timeRefMinutes").text("minute"); } else { thisEl.find(".timeRefMinutes").text("minutes"); }
+            if (seconds == 1) { thisEl.find(".timeRefSeconds").text("second"); } else { thisEl.find(".timeRefSeconds").text("seconds"); }
+
+            //logic for the two_digits ON setting
+            if (settings.format == "on") {
+                days = (String(days).length >= 2) ? days : "0" + days;
+                hours = (String(hours).length >= 2) ? hours : "0" + hours;
+                minutes = (String(minutes).length >= 2) ? minutes : "0" + minutes;
+                seconds = (String(seconds).length >= 2) ? seconds : "0" + seconds;
+            }
+
+            //update the countdown's html values.
+            thisEl.find(".days").text(days);
+            thisEl.find(".hours").text(hours);
+            thisEl.find(".minutes").text(minutes);
+            thisEl.find(".seconds").text(seconds);
+        }
+
+        //run the function
+        countdown_proc();
+
+        //loop the function
+        interval = setInterval(countdown_proc, 1000);
+    };
+
+})(jQuery);
+
+
+
+//Provide the plugin settings
+$("#countdown").countdown({
+        //The countdown end date
+        date: "30 May 2024 12:00:00",
+
+        // on (03:07:52) | off (3:7:52) - two_digits set to ON maintains layout consistency
+        format: "on"
+    },
+
+    function() {
+        // This will run when the countdown ends
+        //alert("We're Out Now");
+    });
+
+
+function setHeights() {
+    var windowHeight = $(window).height();
+    $('.slide').height(windowHeight);
+}
+
+setHeights();
+
+$(window).resize(function() {
+    setHeights();
+});
+
+function addSticky() {
+    $('.slide').each(function() {
+        var scrollerAnchor = $(this).offset().top;
+        if (window.scrollY >= scrollerAnchor) {
+            $(this).addClass('fix-it');
+        } else {
+            $(this).removeClass('fix-it');
+        }
+    });
+}
+
+$(window).scroll(function() {
+    addSticky();
+});
+</script>

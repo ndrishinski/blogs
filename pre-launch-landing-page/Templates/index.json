@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "landing-page": {
+      "type": "Landing-Page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "landing-page"
+  ]
+}
