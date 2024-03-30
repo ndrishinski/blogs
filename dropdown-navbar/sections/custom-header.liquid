@@ -1,0 +1,79 @@
+
+<header id="vl-custom-header">
+  <h1 class="logo-header" id="h1-logo-header">NICK'S SHOP</h1>
+  <nav class="navbar">
+    <ul class="nav-list">
+      {%- for link in linklists.main-menu.links -%}
+        <li class="nav-item dropdown">
+          <div class="nav-label">
+            <a href="{{ link.url }}">{{ link.title }}</a>
+            <span class="material-symbols-outlined">
+              chevron_right
+            </span>
+          </div>
+          <div class="dropdown-content">
+            {%- for childlink in link.links -%}
+              <a href="#">{{ childlink.title }}</a>
+              {% if forloop.index != link.links.size %}
+              <div class="dropdown-menu-item"></div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+      <li class="nav-item dropdown shopping_cart_icon">
+        <span class="material-symbols-outlined" id="shopping_cart">
+          shopping_cart
+        </span>
+      </li>
+    </ul>
+  </nav>   
+
+  <!-- MOBILE STUFFF -->
+
+  <nav class="mobile-nav">
+    <span class="material-symbols-outlined" id="hamburger-menu">
+      menu
+    </span>
+  </nav>
+</header>
+
+<div class="mobile-nav-container">
+  <ul class="nav-list-mobile">
+    {%- for link in linklists.main-menu.links -%}
+    <li class="nav-item dropdown">
+      <div class="nav-label">
+        <a href="{{ link.url }}">{{ link.title }}</a>
+        <span class="material-symbols-outlined">
+          chevron_right
+        </span>
+      </div>
+      <div class="dropdown-content">
+        {%- for childlink in link.links -%}
+          <a href="#">{{ childlink.title }}</a>
+          {% if forloop.index != link.links.size %}
+            <div class="dropdown-menu-item"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('#hamburger-menu').onclick = function() {
+      const container = document.querySelector('.mobile-nav-container')
+      container.classList.toggle('hide')
+    }
+  })
+</script>    
+
+{% schema %}
+  {
+    "name": "custom-header",
+    "settings": []
+  }
+{% endschema %}

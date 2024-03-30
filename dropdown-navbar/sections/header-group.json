@@ -1,0 +1,14 @@
+{
+  "name": "HEADER STUFF",
+  "type": "header",
+  "sections": {
+    "header": {
+      "type": "custom-header",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "header"
+  ]
+}
