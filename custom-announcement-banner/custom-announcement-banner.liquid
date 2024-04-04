@@ -1,0 +1,104 @@
+<style>
+  /* Add a unique identifier to encapsulate the CSS */
+  .unique-container {
+      height: 30px;
+      background: linear-gradient(to right,#d9c8eb, #7e45b6, #d9c8eb);
+      width: 100%;
+      transition: height .7s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+      color: #fff;
+    }
+    
+    .addition-info {
+      display: none;
+      opacity: 0;
+      font-size: 14px;
+    }
+    
+    span {
+      text-decoration: underline;
+    }
+    
+    p {
+      margin: 1px;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+  
+    50% {
+      opacity: .5;
+    }
+  
+    100% {
+      opacity: 1;
+    }
+  }
+  .unique-container:hover {
+    height: 70px;
+    cursor: pointer;
+    .addition-info {
+      animation: fadeIn 1s;
+      display: block;
+      animation-fill-mode: both;
+    }
+  }
+</style>
+
+<div class="unique-container">
+  <p>{{ section.settings.headline }}</p>
+  <p class="addition-info">{{ section.settings.sub_heading }}{% if section.settings.linked_text %}<span>{{ section.settings.linked_text }}</span>{% endif %}</p>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.unique-container').onclick = function() {
+      window.location.href = "{{ section.settings.custom_url}}"
+    }
+  })
+</script>
+
+{% schema %}
+  {
+    "name": "Custom Announcement Bar",
+    "settings": [
+      {
+        "type": "text",
+        "id": "headline",
+        "label": "Headline Text"
+      },
+      {
+        "type": "text",
+        "id": "sub_heading",
+        "label": "Sub headline Text"
+      },
+      {
+        "type": "text",
+        "id": "linked_text",
+        "label": "Linked Text"
+      },
+      {
+        "type": "text",
+        "id": "custom_url",
+        "label": "URL to Navigate On Click"
+      }
+    ],
+      "presets": [
+    {
+      "name": "Custom Announcement bar"
+    }
+  ]
+  }
+{% endschema %}
