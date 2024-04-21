@@ -23,6 +23,7 @@ if (!customElements.get('media-gallery')) {
     }
 
     setActiveMedia(mediaId, prepend) {
+      return
       const activeMedia = this.elements.viewer.querySelector(`[data-media-id="${ mediaId }"]`);
       this.elements.viewer.querySelectorAll('[data-media-id]').forEach((element) => {
         element.classList.remove('is-active');
