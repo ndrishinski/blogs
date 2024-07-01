@@ -1,0 +1,29 @@
+
+<!-- Add this class "unique-container-class" below -->
+<div class="card-wrapper product-card-wrapper underline-links-hover unique-container-class">
+<!-- Add this class "unique-container-class" above -->  
+  <div
+    class="
+      card
+      card--{{ settings.card_style }}
+      {% if card_product.featured_media %} card--media{% else %} card--text{% endif %}
+      {% if settings.card_style == 'card' %} color-{{ settings.card_color_scheme }} gradient{% endif %}
+      {% if extend_height %} card--extend-height{% endif %}
+      {% if card_product.featured_media == nil and settings.card_style == 'card' %} ratio{% endif %}
+      {% if horizontal_class %} card--horizontal{% endif %}
+    "
+    style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+  >
+
+...
+<img
+    ...
+    />
+  {%- endif -%}
+  </div>
+<!-- Add this div below -->
+  <div class="icon">
+    <a href="" class="iconBox"><span class="material-symbols-outlined">arrow_outward</span></a>
+  </div>
+<!-- Add this div above -->
+</div>
