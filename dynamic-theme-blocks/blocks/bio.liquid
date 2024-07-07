@@ -1,0 +1,58 @@
+{{ 'bio-block.css' | asset_url | stylesheet_tag }}
+<div class="popup" id="about">
+  <div class="popup-container">
+    <div class="popup-header">
+      <div class="button-container">
+        <button class="close-btn circle-btn red">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="close-btn circle-btn yellow">
+          <i class="fa-solid fa-window-minimize"></i>
+        </button>
+        <button class="maximize-btn circle-btn green">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+        </button>
+      </div>
+    </div>
+    <div class="popup-body about-container">
+      <div class="img-frame">
+        {{ block.settings.image-bio | image_url: width:250 | image_tag }}
+      </div>
+      <div class="hero-content">
+        <h1>{{ block.settings.name-bio }}</h1>
+        <p>
+          {{ block.settings.bio-bio }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div
+
+{% content_for 'blocks' %}
+  
+{% schema %}
+  {
+    "name": "Bio",
+    "blocks": [{"type": "@app"}, {"type": "@theme"}],
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image-bio",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "name-bio",
+        "label": "Name",
+        "default": "Ruth Thompson"
+      },
+      {
+        "type": "textarea",
+        "id": "bio-bio",
+        "label": "Bio",
+        "default": "I'm a front-end developer. I have dedicated myself to creating visually appealing and user-friendly websites. I'm always open to using new skill sets and I believe in the power of collaboration, working closely with designers and back-end developers to deliver cohesive and effective solutions."
+      },
+    ],
+    "presets": [{"name": "bio"}]
+  }
+{% endschema %}
