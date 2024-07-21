@@ -1,0 +1,292 @@
+<style>
+  .sticky-atc-unique-container * {
+    box-sizing: border-box;
+  }
+  .sticky-atc-unique-container {
+    height: 90px;
+    width: 100vw;
+    background: #fff;
+    box-shadow: 0 0 9px #0000001f;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    /* animate */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .sticky-atc-unique-container img {
+    object-fit: cover;
+    object-position: center;
+    height: 65px;
+    max-width: 100%;
+    width: 65px;
+  }
+
+  .sticky-atc-unique-container .quantity-selector * {
+    height: 40px;
+  }
+
+  .sticky-atc-unique-container .quantity-selector {
+    border: 1px solid #000;
+  }
+
+  .sticky-atc-unique-container .atc-input {
+    width: 40px;
+    border: none;
+    outline: none !important;
+    text-align: center;
+  }
+
+  .sticky-atc-unique-container .atc-input:focus {
+    outline: none !important;
+  }
+
+  .sticky-atc-unique-container .atc-minus {
+    border: none;
+    background: #fff;
+    margin-right: -4px;
+  }
+
+  .sticky-atc-unique-container .atc-plus {
+    border: none;
+    background: #fff;
+    margin-left: -4px;
+  }
+
+  .sticky-atc-unique-container .atc-button {
+    height: 40px;
+    width: 160px;
+    border-radius: 20px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sticky-atc-unique-container .atc-button:hover {
+    cursor: pointer;
+  }
+
+  .sticky-atc-unique-container .successful-button {
+    height: 40px;
+    width: 160px;
+    border-radius: 20px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sticky-atc-unique-container .post-submit-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px 0;
+  }
+
+  .atc-post-submit-button {
+    margin: 0 10px;
+  }
+
+  .visible {
+    opacity: 1;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media screen and (max-width: 750px) {
+    .sticky-atc-unique-container img {
+      display: none;
+    }
+
+    .sticky-atc-unique-container .quantity-selector {
+      display: none;
+    }
+
+    .sticky-atc-unique-container .atc-button {
+      width: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 2px;
+    }
+  }
+</style>
+
+<div class="sticky-atc-unique-container hidden">
+  <div class="image">
+    {{ product | image_url: width: 200 | image_tag }}
+  </div>
+  <div class="details">
+    <p>{{ product.title }}</p>
+    <p>{{ product.price | money }}</p>
+  </div>
+  <div class="quantity-selector">
+    <div class="js-qty__wrapper">
+      <button
+        type="button"
+        class="atc-minus"
+        aria-label="quantity minus"
+        onsubmit="false"
+      >
+        <span class="icon__fallback-text" aria-hidden="true">&minus;</span>
+      </button>
+      <input
+        class="atc-input"
+        type="text"
+        id="cart_updates_{{ product.key }}"
+        name="updates[]"
+        class="atc-quantity"
+        value="1"
+        min="0"
+        pattern="[0-9]*"
+        data-id="{{ product.key }}"
+      >
+      <button
+        type="button"
+        class="atc-plus"
+        aria-label="quantity plus"
+        onsubmit="false"
+      >
+        <span class="icon__fallback-text" aria-hidden="true">+</span>
+      </button>
+    </div>
+  </div>
+  <div class="atc-atc-button">
+    <input
+      type="button"
+      value="Add To Cart"
+      class="atc-button"
+    >
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function replaceHtml(newHTML) {
+      document.querySelector('.sticky-atc-unique-container').innerHTML = newHTML
+    }
+    
+    let input = document.querySelector('.atc-input')
+    let num = Number(document.querySelector('.atc-input').value)
+    
+    document.querySelector('.atc-minus').addEventListener('click', function(e) {
+      num--
+      if (num < 0) {
+        num = 0
+      }
+      input.value = num
+    })
+
+    document.querySelector('.atc-plus').addEventListener('click', function(e) {
+      num++
+      input.value = num
+    })
+
+    document.querySelector('.atc-button').addEventListener('click', function(e) {
+      // first lets add a spinner on click
+      replaceHtml(`
+        <div class="loading__spinner">
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            class="spinner"
+            viewBox="0 0 66 66"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+          </svg>
+        </div>
+        `)
+      
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          id: {{ product.selected_or_first_available_variant.id }},
+          quantity: num
+        })
+      })
+      .then(data => {
+        // product was successfully added, show success message.
+        console.log('Product added to cart!', data);
+        replaceHtml(`
+      <div class="post-submit-message">
+        <p>Product was successfully added to cart!</p>
+        <div class="atc-post-submit-button">
+          <a href="/cart">
+            <input type="button" value="View Cart" class="successful-button success" />
+          </a>
+        </div>
+      </div>
+      `)
+      })
+      .catch(error => {
+        // product failed to add to cart, show error message.
+        console.error('Error adding product to cart:', error);
+        replaceHtml(`
+          <div class="post-submit-message">
+            <p>Error adding to cart! Please refresh and try again.</p>
+            <div class="atc-post-submit-button">
+              <a href="${window.location.href}">
+                <input type="button" value="Refresh" class="successful-button failure" />
+              </a>
+            </div>
+          </div>
+      `)
+      });
+    })
+
+    // logic for show on scroll
+      const fixedElement = document.querySelector('.sticky-atc-unique-container');
+      const scrollThreshold = {{ section.settings.show_atc_threshold }}
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > scrollThreshold) {
+          if (fixedElement.classList.contains('visible')) return
+          fixedElement.classList.remove('hidden');
+          setTimeout(() => {
+            fixedElement.classList.add('visible');
+          }, 200)
+        } else {
+          if (fixedElement.classList.contains('visible')) {
+            fixedElement.classList.remove('visible');
+            setTimeout(() => {
+              fixedElement.classList.add('hidden');
+            }, 500); // Match the duration of the CSS transition
+          }
+        }
+      });
+  });
+</script>
+{% schema %}
+{
+  "name": "Sticky Add To Cart",
+  "settings": [
+    {
+      "type": "number",
+      "id": "show_atc_threshold",
+      "label": "Set scrolling threshold for ATC to appear.",
+      "default": 300
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky Add To Cart"
+    }
+  ]
+}
+{% endschema %}
