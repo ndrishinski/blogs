@@ -1,0 +1,107 @@
+{% comment %}
+  Renders a standard dropdown style menu for the header.
+
+  Usage:
+  {% render 'dropdown-header-images' %}
+{% endcomment %}
+
+<style>
+  .header__submenu__parent {
+    position: absolute;
+    width: 100%;
+    padding: 10px 5px;
+    left: 0;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    grid-gap: 4px;
+  }
+
+  .header__submenu__parent img {
+    border-radius: 1em;
+    box-shadow: var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius) rgba(var(--color-shadow),var(--popup-shadow-opacity));
+  }
+
+  .child_parent-1 {
+    font-weight: 700;
+  }
+
+  .childlink-li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .grandchildren_links {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li>
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" style="position: static;">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  class="{%- if link.child_active %}header__active-menu-item{% endif %}"
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {% render 'icon-caret' %}
+              </summary>
+              <ul
+                id="HeaderMenu-MenuList-{{ forloop.index }}"
+                class="header__submenu__parent header__submenu list-menu list-menu--disclosure color-{{ section.settings.menu_color_scheme }} gradient caption-large motion-reduce global-settings-popup"
+                role="list"
+                tabindex="-1"
+              >
+                {%- for childlink in link.links -%}
+                  <li class="childlink-li">
+                    {{ childlink.object.image | image_url: width: 200 | image_tag }}
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="child_parent-1 header__menu-item list-menu__item link link--text focus-inset caption-large{% if childlink.current %} list-menu__item--active{% endif %}"
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {{ childlink.title | escape }}
+                      </a>
+                    {%- if childlink.links != blank -%}
+                      <div class="grandchildren_links" id="Details-HeaderSubMenu-{{ link.handle }}-{{ childlink.handle }}">
+                          {%- for grandchildlink in childlink.links -%}
+                            <div>
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="header__menu-item list-menu__item link link--text focus-inset caption-large{% if grandchildlink.current %} list-menu__item--active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </div>
+                          {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </details>
+          </header-menu>
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
