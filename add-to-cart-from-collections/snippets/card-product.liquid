@@ -20,7 +20,60 @@
   Usage:
   {% render 'card-product', show_vendor: section.settings.show_vendor %}
 {% endcomment %}
+{% style %}
+  .collection-add-to-cart {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    background: #1d438a;
+    border-radius: 50%;
+    top: 60%;
+    right: 18px;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
 
+  .collection-add-to-cart:hover {
+    background: #778eb8;
+  }
+
+  .material-symbols-outlined {
+    color: white;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
+{% endstyle %}
+<script>
+  function addProductFromCollection(id) {
+    let formData = {
+     'items': [{
+      'id': id,
+      'quantity': 1
+      }]
+    };
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(async response => {
+      let final = await response.json()
+      window.location.href = '{{ routes.cart_url }}'
+      return final
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+</script>
 {%- unless skip_styles -%}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
@@ -564,6 +617,13 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="collection-add-to-cart" onclick="addProductFromCollection({{ card_product.selected_or_first_available_variant.id }})">
+    <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined">
+      add_shopping_cart
+      </span>
+    </span>
   </div>
 {%- else -%}
   {%- liquid
