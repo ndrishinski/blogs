@@ -10,6 +10,156 @@
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
 {% endcomment %}
+<style>
+  .button {
+    --color: #fff;
+    --background: #6D58FF;
+    --height: 46px;
+    --width: 100%;
+    --icon: #fff;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    border: none;
+    outline: none;
+    background: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    width: var(--width);
+    letter-spacing: .5px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color);
+    line-height: var(--height);
+    &:before,
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+    &:before {
+        transform: translate(-50%, -50%);
+        width: var(--before-w, var(--width));
+        height: var(--before-h, var(--height));
+        border-radius: var(--before-r, 7px);
+        background: var(--background);
+        transform-origin: 50% 50%;
+        transition: width .3s, height .3s, border-radius .2s;
+        transition-delay: .2s;
+    }
+    &:after {
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        background: var(--icon);
+        z-index: 2;
+        border-radius: 50%;
+        transform: scale(0);
+    }
+    span {
+        z-index: 1;
+        display: block;
+        position: relative;
+        opacity: var(--span-o, 1);
+        transform: scale(var(--span-s, 1));
+        transition: opacity .3s, transform .2s;
+        transition-delay: .2s;
+    }
+    svg {
+        width: 15px;
+        height: 13px;
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        stroke: var(--icon);
+        stroke-width: 2px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transform: translate(-50%, -50%);
+        stroke-dasharray: 17px;
+        stroke-dashoffset: var(--svg-o, 17px);
+        transition: stroke-dashoffset .3s ease;
+    }
+    &.processing {
+        --before-w: 41px;
+        --before-h: 41px;
+        --before-r: 22px;
+        --span-o: 0;
+        --span-s: .6;
+        --after-s: 1;
+        --svg-o: 34px;
+        &:before {
+            animation: pulse 2s linear forwards;
+        }
+        &:after {
+            animation: dot 2s linear forwards;
+        }
+        svg {
+            transition-delay: 2s;
+        }
+    }
+}
+
+@keyframes pulse {
+    4% {
+        transform: translate(-50%, -50%) scaleX(1.1);
+    }
+    8% {
+        transform: translate(-50%, -50%);
+    }
+    24%,
+    56%,
+    88% {
+        transform: translate(-50%, -50%) scale(.8);
+    }
+    40%,
+    72% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+@keyframes dot {
+    8% {
+        transform: scale(0);
+    }
+    16% {
+        transform: scale(1) rotate(30deg) translateX(48px);
+    }
+    95% {
+        transform: scale(1) rotate(1000deg) translateX(48px);
+    }
+    100% {
+        transform: scale(.125) rotate(1050deg) translate(52px, -6px);
+    }
+}
+
+  .button, .shopify-challenge__button, .customer button, button.shopify-payment-button__button--unbranded {
+    border-radius: 7px;
+  }
+
+  .button:after, .shopify-challenge__button:after, .customer button:after, .shopify-payment-button__button--unbranded:after {
+    border-radius: 7px;
+  }
+
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let one = document.querySelector('#custom-button')
+ 
+    one.addEventListener('click', e => {
+      one.classList.add('processing');
+      setTimeout(() => {
+        one.classList.remove('processing')
+        one.querySelector('span').innerHTML = 'Add To Cart'
+      }, 3000)
+    });
+  })
+</script>
 <div {{ block.shopify_attributes }}>
   {%- if product != blank -%}
     {%- liquid
@@ -79,10 +229,10 @@
             endif
           -%}
           <button
-            id="ProductSubmitButton-{{ section_id }}"
             type="submit"
             name="add"
-            class="product-form__submit button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
+            id="custom-button"
+            class="button restart product-form__submit button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
             {% if product.selected_or_first_available_variant.available == false
               or quantity_rule_soldout
               or product.selected_or_first_available_variant == nil
@@ -90,15 +240,20 @@
               disabled
             {% endif %}
           >
-            <span>
               {%- if product.selected_or_first_available_variant == nil -%}
+            <span>
                 {{ 'products.product.unavailable' | t }}
-              {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
-                {{ 'products.product.sold_out' | t }}
-              {%- else -%}
-                {{ 'products.product.add_to_cart' | t }}
-              {%- endif -%}
             </span>
+              {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
+            <span>
+                {{ 'products.product.sold_out' | t }}
+            </span>
+              {%- else -%}
+                <span>Add To Cart</span>
+                <svg viewBox="0 0 15 13">
+                    <polyline points="2 6.5 6 10.5 13 2.5"></polyline>
+                </svg>
+              {%- endif -%}
             {%- render 'loading-spinner' -%}
           </button>
           {%- if show_dynamic_checkout -%}
