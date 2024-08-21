@@ -1,3 +1,70 @@
+<style>
+  
+
+.custom-rating-selector .rating {
+  display: inline-block;
+  margin: 0;
+}
+
+.custom-rating-selector .rating-star {
+  --letter-spacing: 0.8;
+  --font-size: 1.7;
+}
+
+.custom-rating-selector .rating-star {
+  --letter-spacing: 0.7;
+  --font-size: 1.4;
+  --letter-spacing: 0.7;
+  --font-size: 1.4;
+  --color-foreground: 255, 255, 255;
+  --rating-max: 5;
+  --rating-decimal: 5;
+}
+
+.custom-rating-selector .rating-star {
+  --color-rating-star: black;
+  --percent: calc(var(--rating-decimal) / var(--rating-max) * 100%);
+  letter-spacing: calc(var(--letter-spacing) * 1rem);
+  font-size: calc(var(--font-size) * 1rem);
+  line-height: 1;
+  display: inline-block;
+  font-family: Times;
+  margin: 0;
+}
+
+.custom-rating-selector .rating-star::before {
+  content: '★★★★★';
+  background: linear-gradient(
+    90deg,
+    var(--color-rating-star) var(--percent),
+    rgba(0, 0, 0, 0.15) var(--percent)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+.custom-rating-selector .rating-text {
+  display: none;
+}
+
+.custom-rating-selector .rating-count {
+  display: inline-block;
+  margin: 0;
+}
+
+.custom-rating-selector @media (forced-colors: active) {
+  .custom-rating-selector .rating {
+    display: none;
+  }
+
+  .custom-rating-selector .rating-text {
+    display: block;
+  }
+}
+
+</style>
+
 <product-info
   id="MainProduct-{{ section.id }}"
   class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
@@ -87,6 +154,20 @@
 
           {%- for block in section.blocks -%}
             {%- case block.type -%}
+              {%- when 'custom_reviews' -%}
+                <div class="custom-rating-selector">
+                  <div
+                      class="rating"
+                      role="img"
+                    >
+                      <span
+                        aria-hidden="true"
+                        class="rating-star"
+                        style="--rating: 1; --rating-max: 5; --rating-decimal: {{ product.metafields.custom.product_rating.value }};"
+                      ></span>
+                      <p>{{ product.metafields.custom.product-review.value }}</p>
+                    </div>
+                </div>
               {%- when '@app' -%}
                 {% render block %}
               {%- when 'text' -%}
@@ -728,6 +809,11 @@
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "custom_reviews",
+      "name": "Custom Reviews",
+      "limit": 1
     },
     {
       "type": "text",
