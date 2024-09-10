@@ -1,0 +1,30 @@
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when '@app' -%}
+      {% render block %}
+      {% comment %} add here {% endcomment %}
+    {%- when 'best-seller' -%}
+      {% render 'best-seller' tags: product.tags %}
+      {% comment %} add above here  {% endcomment %}
+    {%- when 'text' -%}
+...
+
+
+
+...
+{% schema %}
+  {
+    "name": "t:sections.main-product.name",
+    "tag": "section",
+    "class": "section",
+    "blocks": [
+      {
+        "type": "@app"
+      },
+      // add here
+      {
+        "type": "best-seller",
+        "name": "Best Seller Tag",
+        "limit": 1
+      },
+      // add above
