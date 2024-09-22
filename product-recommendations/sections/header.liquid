@@ -1,0 +1,25 @@
+...
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when '@app' -%}
+      {% render block %}
+     // add cart-upsell here
+    {%- when 'cart-upsell' -%}
+      {% include 'cart-upsell' %}
+  {%- endcase -%}
+{%- endfor -%}
+...
+
+...
+"blocks": [
+  {
+    "type": "@app"
+  },
+  // add cart-upsell below
+  {
+    "type": "cart-upsell",
+    "name": "Cart Upsell"
+  }
+]
+}
+{% endschema %}

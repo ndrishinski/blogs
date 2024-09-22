@@ -1,0 +1,342 @@
+<div id="main-cart-page" class="carousel-container">
+  <h2 class="carousel-title">You might also like</h2>
+  <div class="carousel">
+      <div class="carousel-inner" id="carouselInner">
+      <!-- Product cards will be inserted here by JavaScript -->
+      </div>
+    <input type="button" class="carousel-btn carousel-btn-prev" id="prevBtn" aria-label="Previous product" value="&lt;">
+    <input type="button" class="carousel-btn carousel-btn-next" id="nextBtn" aria-label="Next product" value="&gt;">
+  </div>
+</div>
+<script>
+{% if request.page_type == 'cart' %}
+  isCartPage = true
+{% else %}
+  isCartPage = false
+{% endif %}
+
+async function onCartUpdate() {
+    const fetchSections = isCartPage ? ['cart-drawer', 'main-cart-items', 'cart-icon-bubble'] : ['cart-drawer', 'cart-icon-bubble']; // for dawn
+    const promises = fetchSections.map(section => 
+      fetch(`${routes.cart_url}?section_id=${section}`) // for dawn
+        .then(response => response.text())
+        .then(responseText => {
+          const html = new DOMParser().parseFromString(responseText, 'text/html');
+          const selectors = section === 'cart-drawer' ? ['cart-drawer-items', '.cart-drawer__footer', '.cart-count-bubble'] : ['cart-items', '.cart-count-bubble']; // for dawn
+          selectors.forEach(selector => {
+            const targetElement = document.querySelector(selector);
+            const sourceElement = html.querySelector(selector);
+            if (targetElement && sourceElement) {
+              targetElement.replaceWith(sourceElement);
+            }
+          });
+        })
+        .catch(e => {
+          console.error(e);
+          console.log('An error occurred while updating your cart. Please try again later.');
+        })
+    );
+
+    Promise.all(promises).then(async () => {
+      const mainCarousel = document.querySelector('#main-cart-page');
+      const clone = mainCarousel.cloneNode(true);
+      initializeCartUpsell(await fetchCart(), clone);
+    });
+
+    // if theme has an event to use!
+    // document.dispatchEvent(new CustomEvent('cart:build'));
+    // const mainCarousel = document.querySelector('#main-cart-page');
+    // const clone = mainCarousel.cloneNode(true);
+    // initializeCartUpsell(await fetchCart(), clone);
+  }
+
+  async function handleAddToCart(e) {
+    if (e.target.classList.contains('add-to-cart-btn')) {
+      const productId = e.target.getAttribute("data-id");
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: productId,
+            quantity: 1,
+          }),
+        });
+        if (!response.ok) throw new Error('Failed to add to cart');
+        onCartUpdate();
+      } catch (error) {
+        console.error('Error:', error);
+        console.log('An error occurred while updating your cart. Please try again later.');
+      }
+    }
+  }
+
+  function createProductCard(product) {
+    const availableVariant = product.variants.find(variant => variant.available);
+    if (!availableVariant) return '';
+    return `
+      <div class="product-card">
+          <div class="product-content" data-id="${availableVariant.id}">
+              <img src="${product.featured_image}" alt="${product.title}" class="product-image">
+              <div class="product-details">
+                  <h3 class="product-name">${product.title}</h3>
+                  <p class="product-price">$${(availableVariant.price / 100).toFixed(2)}</p>
+                  <button class="add-to-cart-btn" data-id="${availableVariant.id}">Add to Cart</button>
+              </div>
+          </div>
+      </div>
+    `;
+  }
+
+  async function fetchCart() {
+    try {
+      const response = await fetch(window.Shopify.routes.root + 'cart.js');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      console.log('An error occurred while updating your cart. Please try again later.');
+      return null;
+    }
+  }
+
+  function initializeCartUpsell(fetchedCart, container) {
+    const cart = fetchedCart ? fetchedCart : {{ cart | json }};
+    const productId = cart?.items[0]?.product_id;
+    if (!productId) return;
+
+    let carouselContainer = container
+    let carouselClone
+    if (!carouselContainer) return
+    carouselContainer.style.display = 'grid'; // or block or flex? IDK
+
+    fetch(`${window.Shopify.routes.root}recommendations/products.json?product_id=${productId}&limit=20&intent=related`)
+      .then(response => response.json())
+      .then(({ products }) => {
+        const carouselInner = document.createElement('div');
+        carouselInner.classList = 'carousel-inner'
+        carouselInner.id = 'carouselInner'
+        const prevBtn = container.querySelector('#prevBtn');
+        const nextBtn = container.querySelector('#nextBtn');
+        let currentIndex = 0;
+        let currentIndex2 = 0;
+
+        // Create product cards
+        products.filter(product => !cart.items.some(item => item.product_id === product.id))
+          .forEach(product => {
+            const productCard = createProductCard(product);
+            if (productCard) {
+              carouselInner.innerHTML += productCard; // Use innerHTML to append
+            }
+          });
+
+        // replace carousel with updated products
+        carouselContainer.querySelector('#carouselInner').replaceWith(carouselInner)
+        if (isCartPage) {
+          document.querySelector('#main-cart-items .js-contents').appendChild(container)
+        }
+        const cartDrawer = document.querySelector('cart-drawer'); // for dawn
+        if (cartDrawer) {
+          const cartDrawerContent = cartDrawer.querySelector('table > tbody'); // for dawn
+          if (cartDrawerContent) {
+            // Clone the carousel container
+            let carouselClone = carouselContainer.cloneNode(true)
+            carouselClone.id = 'drawer-cart'
+            carouselClone.querySelector('.carousel-inner').id = 'carouselInner-2'
+            carouselClone.querySelector('.carousel-btn-prev').id = 'prevBtn-2'
+            carouselClone.querySelector('.carousel-btn-next').id = 'nextBtn-2'
+            // Append the clone to the cart drawer
+            cartDrawerContent.appendChild(carouselClone);
+            const prevBtn2 = carouselClone.querySelector('#prevBtn-2');
+            const nextBtn2 = carouselClone.querySelector('#nextBtn-2');
+            nextBtn2.addEventListener('click', (e) => {
+              e.preventDefault(); // Prevent default button behavior
+              nextSlide(true);
+            });
+            prevBtn2.addEventListener('click', (e) => {
+              e.preventDefault(); // Prevent default button behavior
+              prevSlide(true);
+            });
+          }
+        }
+
+        function updateCarousel(slideout=false) {
+          if (slideout) {
+            let clone = document.querySelector('#carouselInner-2')
+            clone.style.transform = `translateX(-${currentIndex2 * 100}%)`;
+          } else {
+            carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+          }
+        }
+
+        function nextSlide(slideout=false) {
+          if (slideout) {
+            currentIndex2 = (currentIndex2 + 1) % products.length;
+          } else {
+            currentIndex = (currentIndex + 1) % products.length;
+          }
+          updateCarousel(slideout);
+        }
+
+        function prevSlide(slideout=false) {
+          if (slideout) {
+            currentIndex2 = (currentIndex2 - 1 + products.length) % products.length;
+          } else {
+            currentIndex = (currentIndex - 1 + products.length) % products.length;
+          }
+          updateCarousel(slideout);
+        }
+
+        nextBtn.addEventListener('click', () => nextSlide(false));
+        prevBtn.addEventListener('click', () => prevSlide(false));
+
+        // Add to cart functionality
+        carouselInner.addEventListener('click', async (e) => {
+          e.preventDefault()
+          handleAddToCart(e)
+        });
+
+        document.querySelector('#carouselInner-2').addEventListener('click', async (e) => {
+          e.preventDefault()
+          handleAddToCart(e)
+        })
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        console.log('An error occurred while updating your cart. Please try again later.');
+      });
+  }
+
+  function cartSubscription() {
+    subscribe(PUB_SUB_EVENTS.cartUpdate, async (everything) => {
+      onCartUpdate()
+    }); // all for dawn
+    // document.addEventListener('cart:updated', (e) => {
+    //   let cart = e.detail.cart
+    //   onCartUpdate()
+    // }) // for event listener
+  }
+
+  // Initialize the cart upsell when the DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    onCartUpdate()
+    cartSubscription()
+  });
+</script>
+<style>
+  body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.carousel-container {
+  /* max-width: 400px; */
+  max-width: 100%;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: none;
+}
+
+.carousel-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 16px;
+  margin: 0;
+}
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-inner {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card {
+  flex: 0 0 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.product-content {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 16px;
+}
+
+.product-details {
+  flex-grow: 1;
+}
+
+.product-name {
+  font-weight: bold;
+  margin: 0 0 4px 0;
+}
+
+.product-price {
+  color: #666;
+  margin: 0 0 8px 0;
+}
+
+.add-to-cart-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #0056b3;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.carousel-btn-prev {
+  left: 10px;
+}
+
+.carousel-btn-next {
+  right: 10px;
+}
+</style>
