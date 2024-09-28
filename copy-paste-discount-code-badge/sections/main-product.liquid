@@ -1,0 +1,37 @@
+...
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when '@app' -%}
+      {% render block %}
+    {% comment %} add here  {% endcomment %}
+    {%- when 'copy-discount-code' -%}
+      {% render 'copy-discount-code' %}
+    {% comment %} add here  {% endcomment %}
+    {%- when 'text' -%}
+      <p
+        class="product__text inline-richtext{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+        {{ block.shopify_attributes }}
+      >
+        {{- block.settings.text -}}
+      </p>
+    {%- when 'title' -%}
+    ...
+
+    {% schema %}
+      {
+        "name": "t:sections.main-product.name",
+        "tag": "section",
+        "class": "section",
+        "blocks": [
+          {
+            "type": "@app"
+          },
+          // add here 
+          {
+            "type": "copy-discount-code",
+            "name": "Copy Discount Code Widget",
+            "settings": []
+          },
+          // add here
+          {
+            ...
