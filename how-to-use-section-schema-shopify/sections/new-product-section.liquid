@@ -2,26 +2,29 @@
   <div class="product-grid">
     <div class="product-images">
       <div class="product-image">
-        <img id="mainImage" src="/placeholder.svg?height=400&width=400" alt="Product main image">
+        {{ section.settings.main-image | image_url: width: 400 | image_tag: alt: "Product main image" }}
       </div>
     </div>
     <div class="product-info">
       <div>
-        <h1 class="product-title">Ergonomic Desk Chair</h1>
+        <h1 class="product-title">{{ section.settings.product-title }}</h1>
         <div class="product-rating">
-          <span class="star">★★★★★</span>
-          <span>(150 reviews)</span>
+          {% assign star_rating = section.settings.star-review %}
+          {% for i in (1..5) %}
+          {% if i <= star_rating %} <span class="star">★</span>
+            {% else %}
+            <span class="star">☆</span>
+            {% endif %}
+            {% endfor %}
+            <span>(150 reviews)</span>
         </div>
       </div>
-      <p>Experience ultimate comfort with our ergonomic desk chair, designed to support your body during long work
-        hours.</p>
-      <div class="product-price">$299.99</div>
+      <p>{{ section.settings.product-description }}</p>
+      <div class="product-price">${{ section.settings.product-price }}</div>
       <div class="product-options">
-        <label for="color">Color</label>
+        <label for="color">Color Selected:</label>
         <select id="color">
-          <option>Black</option>
-          <option>White</option>
-          <option>Gray</option>
+          <option>{{ section.settings.product-color }}</option>
         </select>
       </div>
       <div style="display: flex; gap: 20px;">
@@ -30,7 +33,8 @@
           <span id="quantity">1</span>
           <button id="increaseQuantity">+</button>
         </div>
-        <button class="add-to-cart">Add to Cart</button>
+        <button {% unless section.settings.background==blank %}style="background: {{ section.settings.background }}" {%
+          endunless %} class="add-to-cart">Add to Cart</button>
       </div>
     </div>
   </div>
@@ -42,11 +46,21 @@
       </div>
       <div class="details-content">
         <p>This ergonomic desk chair is designed with your comfort in mind...</p>
+        {% assign liquiProducts = section.settings.collection.products %}
+        {% for prod in liquiProducts %}
+        <a href="{{ prod.url }}">
+          <p>{{ prod.title }}</p>
+        </a>
+        {% endfor %}
       </div>
     </div>
     <div class="details-section">
       <div class="details-header">
+        {% if section.settins.metafield == blank %}
+        <span>{{ section.settings.metafield }}</span>
+        {% else %}
         <span>Features</span>
+        {% endif %}
         <span class="toggle">▼</span>
       </div>
       <div class="details-content">
@@ -59,12 +73,16 @@
         <span class="toggle">▼</span>
       </div>
       <div class="details-content">
-        <p>Dimensions: 26"W x 26"D x 38-42"H, Weight capacity: 300 lbs...</p>
+        {% for block in section.blocks %}
+        {%- case block.type -%}
+        {%- when "heading" -%}
+        <h1>{{ block.settings.heading }}</h1>
+        {% endcase %}
+        {% endfor %}
       </div>
     </div>
   </div>
 </div>
-
 <script>
   // Expandable sections
   const detailsSections = document.querySelectorAll('.details-section');
@@ -80,3 +98,95 @@
     });
   });
 </script>
+{% schema %}
+{
+  "name": "New Product Page",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "main-image",
+      "label": "Main Image"
+    },
+    {
+      "type": "text",
+      "id": "product-title",
+      "label": "Product Title"
+    },
+    {
+      "type": "range",
+      "id": "star-review",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "# of stars",
+      "default": 4
+    },
+    {
+      "type": "textarea",
+      "id": "product-description",
+      "label": "Product Description"
+    },
+    {
+      "type": "number",
+      "id": "product-price",
+      "label": "Product Price"
+    },
+    {
+      "type": "select",
+      "id": "product-color",
+      "label": "Product Color",
+      "options": [
+        {
+        "value": "Black",
+        "label": "Black"
+        },
+        {
+        "value": "White",
+        "label": "White"
+        },
+        {
+        "value": "Grey",
+        "label": "Grey"
+        }
+      ],
+      "default": "Black"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "linear-gradient(#ffffff, #000000)"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "metafield",
+      "label": "Use a Metafield Here",
+      "default": "Features"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Custom Block",
+      "settings": [
+        {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Hello, world!"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "New Product Page"
+    }
+  ]
+}
+{% endschema %}
