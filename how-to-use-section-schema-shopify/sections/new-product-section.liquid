@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="product-grid">
+    <div class="product-images">
+      <div class="product-image">
+        <img id="mainImage" src="/placeholder.svg?height=400&width=400" alt="Product main image">
+      </div>
+    </div>
+    <div class="product-info">
+      <div>
+        <h1 class="product-title">Ergonomic Desk Chair</h1>
+        <div class="product-rating">
+          <span class="star">★★★★★</span>
+          <span>(150 reviews)</span>
+        </div>
+      </div>
+      <p>Experience ultimate comfort with our ergonomic desk chair, designed to support your body during long work
+        hours.</p>
+      <div class="product-price">$299.99</div>
+      <div class="product-options">
+        <label for="color">Color</label>
+        <select id="color">
+          <option>Black</option>
+          <option>White</option>
+          <option>Gray</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 20px;">
+        <div class="quantity-selector">
+          <button id="decreaseQuantity">-</button>
+          <span id="quantity">1</span>
+          <button id="increaseQuantity">+</button>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+  <div class="product-details">
+    <div class="details-section">
+      <div class="details-header">
+        <span>Description</span>
+        <span class="toggle">▼</span>
+      </div>
+      <div class="details-content">
+        <p>This ergonomic desk chair is designed with your comfort in mind...</p>
+      </div>
+    </div>
+    <div class="details-section">
+      <div class="details-header">
+        <span>Features</span>
+        <span class="toggle">▼</span>
+      </div>
+      <div class="details-content">
+        <p>Adjustable height, 360-degree swivel, lumbar support...</p>
+      </div>
+    </div>
+    <div class="details-section">
+      <div class="details-header">
+        <span>Specifications</span>
+        <span class="toggle">▼</span>
+      </div>
+      <div class="details-content">
+        <p>Dimensions: 26"W x 26"D x 38-42"H, Weight capacity: 300 lbs...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Expandable sections
+  const detailsSections = document.querySelectorAll('.details-section');
+
+  detailsSections.forEach(section => {
+    const header = section.querySelector('.details-header');
+    const content = section.querySelector('.details-content');
+    const toggle = section.querySelector('.toggle');
+
+    header.addEventListener('click', () => {
+      content.classList.toggle('active');
+      toggle.textContent = content.classList.contains('active') ? '▲' : '▼';
+    });
+  });
+</script>
