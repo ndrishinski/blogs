@@ -28,6 +28,44 @@
   {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
   {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {%- endunless -%}
+{% style %}
+  #modal-container {
+      position: fixed; /* Change to fixed to cover the viewport */
+      top: 0; /* Align to the top */
+      left: 0; /* Align to the left */
+      width: 100vw; /* Full width of the viewport */
+      height: 100vh; /* Full height of the viewport */
+      background-color: rgba(0, 0, 0, 0.5); /* Optional: semi-transparent background */ */
+      z-index: 1000; /* Ensure it appears above other content */ */
+      display: none;
+  }
+  .collection-add-to-cart {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    background: #1d438a;
+    border-radius: 50%;
+    top: 60%;
+    right: 18px;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .collection-add-to-cart:hover {
+    background: #778eb8;
+  }
+  .material-symbols-outlined {
+    color: white;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
+{% endstyle %}
 {%- if card_product and card_product != empty -%}
   {%- liquid
     assign ratio = 1
@@ -568,6 +606,12 @@
       </div>
     </div>
   </div>
+
+  <div class="collection-add-to-cart" onclick="showModal('{{ card_product.handle }}')">
+    <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined"> add_shopping_cart </span>
+    </span>
+  </div>
 {%- else -%}
   {%- liquid
     assign ratio = 1
@@ -622,3 +666,96 @@
     </div>
   </div>
 {%- endif -%}
+
+<script>
+
+  async function getNewVariant(handle) {
+    let selectedColorOption = document.querySelector('.color-option.selected')
+    let selectedSizeOption = document.querySelector('.size-option.selected')
+
+    const response = await fetch(
+      `/products/${handle}?section_id=product-popup&option_values=${selectedColorOption?.dataset?.id || ''},${selectedSizeOption?.dataset?.id || ''}`
+    );
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const selectedVariantJson = doc.querySelector('script[data-selected-variant]').textContent;
+    return JSON.parse(selectedVariantJson)
+  }
+
+  function changeQuantity(delta) {
+      const currentQuantity = Number(document.getElementById('quantity').innerText);
+      const newQuantity = Math.max(0, currentQuantity + delta);
+      document.getElementById('quantity').textContent = newQuantity;
+  }
+
+  function closeModal() {
+    let item = document.querySelector('.product-popup-modal-overlay')
+    item.addEventListener('click', function(event) {
+      if (event.target === this) {
+        item.remove()
+      }
+    })
+  }
+
+  window.showModal = async function (handle) {
+    let response = await fetch(`/products/${handle}?section_id=product-popup`);
+    let html = await response.text();
+    document.body.insertAdjacentHTML('beforeend', html); // Insert the fetched HTML into the body
+    createListeners();
+    closeModal()
+  };
+
+  function createListeners() {
+    window.changeImage = function (src) {
+      const mainImage = document.querySelector('.product-popup-main-image img');
+      mainImage.src = src;
+    };
+
+    window.selectColor = function (element, color) {
+      document.querySelectorAll('.color-option').forEach((el) => {
+        if (el !== element) {
+          el.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+    };
+
+    window.selectSize = function (element, color) {
+      document.querySelectorAll('.size-option').forEach((el) => {
+        if (el !== element) {
+          el.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+    };
+
+    window.addToCart = async function (handle) {
+      const variant = await getNewVariant(handle);
+      const quantity = Number(document.getElementById('quantity').textContent) || 1
+
+      let formData = {
+       'items': [{
+        'id': variant.id,
+        'quantity': quantity
+        }]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+          window.location.href = '/cart'
+        
+        return response.json();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    };
+  }
+</script>

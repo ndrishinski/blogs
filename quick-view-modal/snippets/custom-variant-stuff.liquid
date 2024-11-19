@@ -1,0 +1,16 @@
+{%- unless product.has_only_default_variant -%}
+  <div class="product-popup-size-selector">
+    <h3 class="product-popup-selector-title">Variants</h3>
+    {%- for option in product.options_with_values -%}
+    <div class="product-popup-size-options">
+      {%- for value in option.values -%}
+      <div onclick="{% if option.position == 1 %}selectColor(this, '{{ value.id }}') {% else %}window.selectSize(this, '{{ value.id }}'){% endif %}" class="product-popup-size-option {% if option.position == 1 %}color-option {% else %}size-option{% endif %} {% if forloop.index0 == 0 %}selected{% endif %}" data-id="{{ value.id }}">
+        {{ value }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    
+  </div>
+  {%- endunless -%}
+  

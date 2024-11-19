@@ -1,0 +1,362 @@
+
+<style>
+/* Modal styles */
+.product-popup-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.modal-container-collection .product-popup-modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 64rem;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  z-index: 9999999999999999999999;
+}
+.modal-container-collection .product-popup-modal-content {
+    display: grid;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+@media (min-width: 768px) {
+    .modal-container-collection .product-popup-modal-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* Product images */
+.modal-container-collection .product-popup-product-images {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.modal-container-collection .product-popup-main-image {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.modal-container-collection .product-popup-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.modal-container-collection .product-popup-image-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background-color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #3b82f6;
+}
+.modal-container-collection .product-popup-image-thumbnails {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+.modal-container-collection .product-popup-thumbnail {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 0.375rem;
+    background-color: #f3f4f6;
+    cursor: pointer;
+    transition: ring 0.3s ease;
+}
+.modal-container-collection .product-popup-thumbnail:hover {
+    box-shadow: 0 0 0 2px #3b82f6;
+}
+.modal-container-collection .product-popup-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.375rem;
+}
+/* Product details */
+.modal-container-collection .product-popup-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.modal-container-collection .product-popup-product-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+}
+.modal-container-collection .product-popup-product-subtitle {
+    font-size: 1.125rem;
+    color: #6b7280;
+}
+.modal-container-collection .product-popup-rating {
+    display: flex;
+    align-items: center;
+}
+.modal-container-collection .product-popup-stars {
+    display: flex;
+    color: #fbbf24;
+}
+.modal-container-collection .product-popup-review-count {
+    margin-left: 0.5rem;
+    color: #6b7280;
+}
+.modal-container-collection .product-popup-price {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+}
+.modal-container-collection .product-popup-original-price {
+    margin-left: 0.5rem;
+    font-size: 1.125rem;
+    color: #6b7280;
+    text-decoration: line-through;
+}
+.modal-container-collection .product-popup-discount {
+    margin-left: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #059669;
+}
+.modal-container-collection .product-popup-product-description {
+    color: #4b5563;
+    margin: 0;
+}
+/* Color and size selectors */
+.modal-container-collection .product-popup-color-selector, .product-popup-size-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.modal-container-collection .product-popup-selector-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+}
+.modal-container-collection .product-popup-color-options, .product-popup-size-options {
+    display: flex;
+    gap: 0.5rem;
+}
+.modal-container-collection .product-popup-color-option, .product-popup-size-option {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  min-height: 35px;
+    min-width: 61px;
+  font-size: 12px;
+}
+.modal-container-collection .product-popup-color-option.selected {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #3b82f6;
+}
+.modal-container-collection .product-popup-size-option {
+    width: auto;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: #f3f4f6;
+    color: #111827;
+    border-radius: 0.375rem;
+}
+.modal-container-collection .product-popup-size-option.selected {
+    background-color: #3b82f6;
+    color: white;
+}
+/* Quantity and add to cart */
+.modal-container-collection .product-popup-quantity-cart {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.modal-container-collection .product-popup-quantity-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+.modal-container-collection .product-popup-quantity-btn {
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+}
+.modal-container-collection .product-popup-quantity-display {
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+.modal-container-collection .product-popup-add-to-cart {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.modal-container-collection .product-popup-add-to-cart:hover {
+    background-color: #2563eb;
+}
+/* Product details and related products */
+.modal-container-collection .product-popup-separator {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 1.5rem 0;
+}
+.modal-container-collection .product-popup-details-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+.modal-container-collection .product-popup-details-list {
+    list-style-position: inside;
+    color: #4b5563;
+}
+.modal-container-collection .product-popup-related-products {
+    background-color: #f9fafb;
+    padding: 1.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+.modal-container-collection .product-popup-related-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+.modal-container-collection .product-popup-related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+.modal-container-collection @media (min-width: 640px) {
+    .modal-container-collection .product-popup-related-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+.modal-container-collection .product-popup-related-item {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+}
+.modal-container-collection .product-popup-related-image {
+    aspect-ratio: 1;
+    background-color: #f3f4f6;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+.modal-container-collection .product-popup-related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.375rem;
+}
+.modal-container-collection .product-popup-related-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.modal-container-collection .product-popup-related-price {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+</style>
+
+<div class="product-popup-modal-overlay modal-container-collection">
+<div class="product-popup-modal">
+    <div class="product-popup-modal-content">
+        <!-- Product Images -->
+        <div class="product-popup-product-images">
+            <div class="product-popup-main-image">
+              <img src="{{ product.featured_image | image_url }}" alt="Product image 1">
+                <span class="product-popup-image-badge">New</span>
+            </div>
+            <div class="product-popup-image-thumbnails">
+              {%- for media in product.media -%}
+                <div class="product-popup-thumbnail" onclick="window.changeImage('{{ media.image | image_url }}')">
+                  <img src="{{ media.image | image_url }}" alt="Product image 1" height="400" width="400">
+                </div>
+              {%- endfor -%}              
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-popup-product-details">
+            <div>
+                <h2 class="product-popup-product-title">{{ product.title }}</h2>
+            </div>
+
+            <div class="product-popup-rating">
+                <a href="{{ product.url }}" style="text-decoration: none;">
+                  <span style="color: #3b82f6; text-decoration: underline;" class="product-popup-review-count">See more</span>
+                  <span style="vertical-align: middle; text-decoration: none; margin-left: 3px;">
+                    <svg fill="#3b82f6" width="17px" height="17px" viewBox="0 0 35 35" data-name="Layer 2" id="Layer_2" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M21.81,34.75H21.5A3.8,3.8,0,0,1,18,31.58L16,20.12A1.36,1.36,0,0,0,14.88,19L3.42,17a3.84,3.84,0,0,1-.56-7.42L29.66.46h0a3.84,3.84,0,0,1,4.88,4.88l-9.11,26.8A3.79,3.79,0,0,1,21.81,34.75ZM30.47,2.83,3.66,11.94a1.34,1.34,0,0,0,.2,2.59l11.46,2a3.85,3.85,0,0,1,3.11,3.11l2,11.46a1.34,1.34,0,0,0,2.59.2L32.17,4.53a1.34,1.34,0,0,0-1.7-1.7Z"></path></g></svg>
+                  </span>
+                </a>
+            </div>
+
+            <div>
+                <span class="product-popup-price">{{ product.price | money_with_currency }}</span>
+            </div>
+
+            <p class="product-popup-product-description">
+                {{ product.description }}
+            </p>
+
+
+          {% render 'custom-variant-stuff',
+            product: product
+          %}
+
+            <div class="product-popup-quantity-cart">
+                <div class="product-popup-quantity-selector">
+                    <button class="product-popup-quantity-btn" onclick="changeQuantity(-1)" aria-label="Decrease quantity">-</button>
+                    <span class="product-popup-quantity-display" id="quantity">1</span>
+                    <button class="product-popup-quantity-btn" onclick="changeQuantity(1)" aria-label="Increase quantity">+</button>
+                </div>
+                <button class="product-popup-add-to-cart" onclick="window.addToCart('{{ product.handle }}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+  <script type="application/json" data-selected-variant>{{ product.selected_or_first_available_variant | json }}</script>
+</div>
+
+
+{% schema %}
+{
+"name": "Section name",
+"class": "shopify-section-product-popup",
+"settings": []
+}
+{% endschema %}
