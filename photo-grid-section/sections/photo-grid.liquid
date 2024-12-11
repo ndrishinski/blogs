@@ -1,0 +1,158 @@
+<style>
+  #nike-product-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+#nike-product-grid-container .product-item {
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    max-height: 520px;
+  }
+  
+  #nike-product-grid-container .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    /* object-position: 0 20%;                             <------------ Edit here for images */
+}
+
+#nike-product-grid-container .product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#nike-product-grid-container .product-info {
+    position: absolute;
+    bottom: 4rem;
+    left: 4rem;
+    z-index: 10;
+}
+
+#nike-product-grid-container .product-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: white!important;
+}
+
+#nike-product-grid-container .shop-now-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    height: 35px;
+    border-radius: 8px;
+}
+
+#nike-product-grid-container .product-item:hover .product-image {
+    transform: scale(1.1);
+}
+
+#nike-product-grid-container .product-item:hover .product-overlay {
+    opacity: 1;
+}
+
+#nike-product-grid-container .product-item:hover .shop-now-btn {
+    background-color: white;
+    color: black;
+}
+
+@media (max-width: 768px) {
+  #nike-product-grid-container {
+        display: flex;
+        flex-direction: column;
+    }
+    #nike-product-grid-container .product-item {
+        width: 100%;
+    }
+}
+
+</style>
+
+<div class="product-grid" id="nike-product-grid-container">
+  {% for block in section.blocks %}
+    <a href="/collections/{{ block.settings.collection-link }}" class="product-item">
+      <img src="{{ block.settings.product-image | image_url }}" alt="Summer Collection" class="product-image first-image" style="object-position: {{ block.settings.object-pos-left }}% {{ block.settings.object-pos-top }}%" >
+      <div class="product-overlay"></div>
+      <div class="product-info">
+          <h3 class="product-title">{{ block.settings.product-title }}</h3>
+          <button class="shop-now-btn">Shop</button>
+      </div>
+  </a>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.shop-now-btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productLink = this.closest('.product-item').getAttribute('href');
+            window.location.href = productLink;
+        });
+    });
+});
+</script>
+
+{%  schema  %}
+{
+  "name": "Photo Grid",
+  "blocks": [
+    {
+      "type": "Image",
+      "name": "Block Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "product-image",
+          "label": "Image Selection"
+        },
+        {
+          "type": "text",
+          "id": "product-title",
+          "label": "Text"
+        },
+        {
+          "type": "collection",
+          "id": "collection-link",
+          "label": "Collection to link"
+        },
+        {
+          "type": "number",
+          "id": "object-pos-left",
+          "label": "Move image from left (%)"
+        },
+        {
+          "type": "number",
+          "id": "object-pos-top",
+          "label": "Move image from top (%)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Photo Grid"
+    }
+  ]
+}
+{% endschema %}
