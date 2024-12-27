@@ -1,0 +1,114 @@
+<style>
+  /* Featured Blogs Section */
+  .featured-blogs {
+    padding: 4rem 0;
+    background-color: #f3f4f6;
+  }
+
+  .featured-blogs h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .blog-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .blog-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .blog-content {
+    padding: 1.5rem;
+  }
+
+  .blog-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-excerpt {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 1rem;
+  }
+
+  .blog-link {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .blog-link:hover {
+    text-decoration: underline;
+  }
+
+  .blog-link svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
+
+<section class="featured-blogs">
+  <div class="container">
+    <h2>Featured Blogs</h2>
+    <div class="blog-grid">
+      {% for article in blogs.shopify.articles %} {% comment %} change "shopify" to the category of your blogs {% endcomment %}
+      <article class="blog-card">
+        <img src="{{ article.image | image_url }}" class="blog-image">
+        <div class="blog-content">
+          <h3 class="blog-title">{{ article.title }}</h3>
+          <p class="blog-excerpt">{{ article.content }}</p>
+          <a href="{{ article.url }}" class="blog-link">
+            Read More
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+"name": "Featured-Blogs",
+"presets": [
+{
+"name": "Featured-Blogs"
+}
+]
+}
+{% endschema %}
