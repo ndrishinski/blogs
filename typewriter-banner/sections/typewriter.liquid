@@ -1,0 +1,213 @@
+<style>
+  .amazing-banner {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    height: 70vh;
+    overflow: hidden;
+  }
+
+  .amazing-banner .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("{{ section.settings.background-image | image_url }}");
+    background-size: cover;
+    background-position: center;
+    display: block;
+  }
+
+  .amazing-banner .background-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .amazing-banner .content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: white;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .amazing-banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .amazing-banner button {
+    padding: 12px 24px;
+    font-size: 1.5rem;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .amazing-banner button:hover {
+    background-color: #2779bd;
+  }
+
+  @media (min-width: 768px) {
+    .amazing-banner h1 {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .amazing-banner h1 {
+      font-size: 3.75rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .amazing-banner h1 {
+      font-size: 2rem;
+    }
+
+    .amazing-banner button {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<div class="amazing-banner">
+  <div class="background-image"></div>
+  <div class="content">
+    <h1 id="typing-text" style="color: {{ section.settings.text-color }};">&nbsp;</h1>
+    <button id="cta-button"
+      style="background: {{ section.settings.button-color }}; color: {{ section.settings.button-text-color }}">
+      {{ section.settings.button-text }}
+    </button>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const typingText = document.getElementById('typing-text');
+    const ctaButton = document.getElementById('cta-button');
+
+    ctaButton.addEventListener('click', function () {
+      window.location.href = '/collections/{{ section.settings.button-link }}'
+    })
+
+    const texts = [
+      "{{ section.settings.first-text }}",
+      "{{ section.settings.second-text }}",
+      "{{ section.settings.third-text }}",
+    ];
+
+    let textIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = {{ section.settings.typing-speed }};
+
+    function typeWriter() {
+      const currentText = texts[textIndex];
+
+      if (isDeleting) {
+        typingText.textContent = currentText.substring(0, charIndex - 1) + '\u00A0';
+        charIndex--;
+      } else {
+        typingText.textContent = currentText.substring(0, charIndex + 1) + '\u00A0';
+        charIndex++;
+      }
+
+      if (!isDeleting && charIndex === currentText.length) {
+        isDeleting = true;
+        setTimeout(typeWriter, 2000); // Wait before starting to delete
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % texts.length;
+        setTimeout(typeWriter, 1000);
+      } else {
+        setTimeout(typeWriter, typingSpeed);
+      }
+    }
+
+    typeWriter();
+  });
+</script>
+{% schema %}
+  {
+    "name": "Typewriter",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "background-image",
+        "label": "Background Image"
+        },
+      {
+        "type": "text",
+        "id": "first-text",
+        "label": "First Text",
+        "default": "Welcome to Our Amazing Website"
+      },
+      {
+        "type": "text",
+        "id": "second-text",
+        "label": "Second Text",
+        "default": "Discover Incredible Features"
+      },
+      {
+        "type": "text",
+        "id": "third-text",
+        "label": "Third Text",
+        "default": "Join Us Today!"
+      },
+      {
+        "type": "color",
+        "id": "text-color",
+        "label": "Text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "button-color",
+        "label": "Button Background Color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "button-text-color",
+        "label": "Button Text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "text",
+        "id": "button-text",
+        "label": "Button Text",
+        "default": "View Products"
+      },
+      {
+        "type": "collection",
+        "id": "button-link",
+        "label": "Button Link To"
+      },
+      {
+        "type": "number",
+        "id": "typing-speed",
+        "label": "Typing Speed (ms)",
+        "default": 50
+      }
+    ],
+    "presets": [
+      {
+        "name": "Typewriter"
+      }
+    ]
+  }
+{% endschema %}
