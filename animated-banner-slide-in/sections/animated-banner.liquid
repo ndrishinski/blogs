@@ -1,0 +1,347 @@
+<style>
+  #custom-hero-animation-banner {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+
+    background: linear-gradient(to right, {{ section.settings.background-first-color }}, {{ section.settings.background-second-color }});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #custom-hero-animation-banner * {
+    color: {{ section.settings.text-color}};
+  }
+
+  #custom-hero-animation-banner .container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2rem;
+    width: 100%;
+  }
+
+  #custom-hero-animation-banner .content {
+    text-align: center;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(20px);
+    margin-top: 50px;
+  }
+
+  #custom-hero-animation-banner h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  #custom-hero-animation-banner p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  #custom-hero-animation-banner .button {
+    background-color: {{ section.settings.button-color }};
+    color: {{ section.settings.button-text-color }};
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+
+  #custom-hero-animation-banner .button:hover {
+    background-color: #f3e8ff;
+  }
+
+  #custom-hero-animation-banner .arrow-right {
+    margin-left: 0.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  #custom-hero-animation-banner .image-container {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(50%, -{{ section.settings.image-height-from-top }}%);
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 3 / 4;
+    opacity: 0;
+  }
+
+  #custom-hero-animation-banner #product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15));
+  }
+
+  #custom-hero-animation-banner .trust-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 20;
+    opacity: 0;
+  }
+
+  #custom-hero-animation-banner .trust-indicator p {
+    /* font-size: 0.875rem; */
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  #custom-hero-animation-banner .stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  #custom-hero-animation-banner .star {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: #fbbf24;
+  }
+
+  @media (min-width: 768px) {
+    #custom-hero-animation-banner h1 {
+      font-size: 3.75rem;
+    }
+
+    #custom-hero-animation-banner p {
+      font-size: 1.5rem;
+    }
+
+    #custom-hero-animation-banner .image-container {
+      max-width: 500px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    #custom-hero-animation-banner .trust-indicator p {
+      font-size: 15px;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  {% if section.settings.enable-image-movement %}
+  #custom-hero-animation-banner #product-image {
+    animation: rotate-image 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes rotate-image {
+    0% {
+      transform: rotate(-5deg);
+    }
+
+    100% {
+      transform: rotate(5deg);
+    }
+  }
+  {% endif %}
+</style>
+<div class="hero-section unique-class-name-section-hero" id="custom-hero-animation-banner">
+  <div class="container">
+    <div class="content">
+      <h1 id="hero-title">{{ section.settings.banner-heading }}</h1>
+      <p id="hero-description">
+        {{ section.settings.banner-subheading }}
+      </p>
+      {% if section.settings.show-cta-button %}
+        <button id="cta-button" class="button">
+          {{ section.settings.cta-text }}
+        </button>
+      {% endif %}
+    </div>
+    <div class="image-container">
+      <img src="{{ section.settings.main-image |  image_url  }}" alt="Featured Product" id="product-image" />
+    </div>
+  </div>
+  <div class="trust-indicator">
+    <p>{{ section.settings.bottom-text }}</p>
+    <div class="stars">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="star">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="star">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="star">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="star">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="star">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const imageContainer = document.querySelector(".image-container");
+    const content = document.querySelector(".content");
+    const trustIndicator = document.querySelector(".trust-indicator");
+
+    {% if section.settings.show-cta-button and section.settings.cta-button-link %}
+      document.querySelector('#cta-button').addEventListener('click', function() {
+        window.location.href = 'products/{{ section.settings.cta-button-link }}'
+      })
+    {% endif %}
+
+    // Slide in the image
+    setTimeout(() => {
+      imageContainer.style.transition = "opacity 1s ease, left 1s ease";
+      imageContainer.style.opacity = "1";
+      imageContainer.style.left = "50%";
+      imageContainer.style.transform = "translate(-50%, -{{ section.settings.image-height-from-top }}%)";
+    }, 100);
+
+    // Fade in and rise up the content
+    setTimeout(() => {
+      content.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+      content.style.opacity = "1";
+      content.style.transform = "translateY(0)";
+    }, 1000);
+
+    // Fade in the trust indicator
+    setTimeout(() => {
+      trustIndicator.style.transition = "opacity 0.8s ease";
+      trustIndicator.style.opacity = "1";
+    }, 1500);
+
+    // Stagger the text animations
+    const textElements = [
+      document.getElementById("hero-title"),
+      document.getElementById("hero-description"),
+      // document.getElementById("cta-button"),
+    ];
+
+    textElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+        element.style.opacity = "1";
+        element.style.transform = "translateY(0)";
+      }, 1000 + index * 200);
+    });
+  });
+</script>
+
+{% schema %}
+{
+"name": "Banner-Slide-In",
+"settings": [
+  {
+    "type": "image_picker",
+    "id": "main-image",
+    "label": "Main Product Image"
+  },
+  {
+    "type": "text",
+    "id": "banner-heading",
+    "label": "Banner Heading",
+    "default": "Discover Your Perfect Style"
+  },
+  {
+    "type": "text",
+    "id": "banner-subheading",
+    "label": "Banner Sub Heading",
+    "default": "Elevate your wardrobe with our curated collection of trendsetting fashion."
+  },
+  {
+    "type": "text",
+    "id": "cta-text",
+    "label": "CTA Button Text",
+    "default": "Shop Now"
+  },
+  {
+    "type": "color",
+    "id": "background-first-color",
+    "label": "BG 1st Color",
+    "default": "#7e22ce"
+  },
+  {
+    "type": "color",
+    "id": "background-second-color",
+    "label": "BG 2nd Color",
+    "default": "#4338ca"
+  },
+  {
+    "type": "color",
+    "id": "text-color",
+    "label": "Text Color",
+    "default": "#fff"
+  },
+  {
+    "type": "color",
+    "id": "button-text-color",
+    "label": "Button Text Color",
+    "default": "#7e22ce"
+  },
+  {
+    "type": "color",
+    "id": "button-color",
+    "label": "Button Background Color",
+    "default": "#fff"
+  },
+  {
+    "type": "checkbox",
+    "id": "show-cta-button",
+    "default": false,
+    "label": "Show CTA Button"
+  },
+  {
+    "type": "range",
+    "default": 40,
+    "min": 0,
+    "max": 100,
+    "label": "Image height from top",
+    "step": 1,
+    "id": "image-height-from-top"
+  },
+  {
+    "type": "text",
+    "default": "Trusted by over 1 million customers",
+    "label": "Bottom Text",
+    "id": "bottom-text"
+  },
+  {
+    "type": "product",
+    "id": "cta-button-link",
+    "label": "Product Link"
+  },
+  {
+    "type": "checkbox",
+    "default": true,
+    "label": "Enable image movement",
+    "id": "enable-image-movement"
+  }
+],
+"presets": [
+  {
+    "name": "Banner-Slide-In"
+  }
+]
+}
+{% endschema %}
