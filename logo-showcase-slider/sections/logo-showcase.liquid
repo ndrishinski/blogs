@@ -68,7 +68,7 @@
 
   @keyframes scroll {
       0% {
-          transform: translateX(0);
+          transform: translateX(50%);
           opacity: 1;
       }
       90% {
@@ -119,6 +119,26 @@
   <div class="logo-scroll">
       <div class="logo-container">
           <!-- First set of logos -->
+          <div class="logo-group">
+            {% for logo in section.blocks %}
+              <div class="logo-wrapper">
+                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
+              </div>
+            {% endfor %}
+          </div>
+          <!-- Message between logos -->
+          <div class="message">
+              {{ section.settings.text-heading }}
+          </div>
+          <!-- Second set of logos -->
+          <div class="logo-group">
+            {% for logo in section.blocks %}
+              <div class="logo-wrapper">
+                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
+              </div>
+            {% endfor %}
+          </div>
+          
           <div class="logo-group">
             {% for logo in section.blocks %}
               <div class="logo-wrapper">
