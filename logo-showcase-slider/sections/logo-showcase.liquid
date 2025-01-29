@@ -2,16 +2,17 @@
   .section-container {
     background: {{ section.settings.section-background }};
   }
+
   .logo-scroll-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 800px;
       margin: 0 auto;
       position: relative;
       overflow: hidden;
   }
 
   .logo-scroll {
-      background-color: {{ section.settings.section-background }};;
+      background-color: {{ section.settings.section-background }};
       width: 100%;
       height: 130px;
       overflow: hidden;
@@ -29,7 +30,7 @@
       display: flex;
       align-items: center;
       padding: 0 1rem;
-      gap: 4rem;
+      gap: 2rem;
   }
 
   .logo-wrapper {
@@ -43,7 +44,9 @@
   .logo {
       width: 100%;
       height: auto;
+      {% if section.settings.enable-grayscale-images %}
       filter: grayscale(1) brightness(0) invert(1);
+      {% endif %}
       opacity: 0.7;
       transition: opacity 0.3s ease;
   }
@@ -60,7 +63,7 @@
       padding: 0 1rem;
       color: white;
       font-family: Arial, sans-serif;
-      font-size: {{ section.settings.font-size }}px;
+      font-size: {{ section.settings.font-size}}px;
       font-weight: bold;
       text-align: center;
       flex-shrink: 0;
@@ -68,24 +71,10 @@
 
   @keyframes scroll {
       0% {
-          transform: translateX(50%);
-          opacity: 1;
-      }
-      90% {
-          transform: translateX(-100%);
-          opacity: 1;
-      }
-      91% {
-        opacity: 0;
-        transform: translateX(-100%);
-      }
-      99% {
-        opacity: 0;
-        transform: translateX(-100%);
+          transform: translateX(0);
       }
       100% {
-          transform: translateX(0);
-          opacity: 0;
+          transform: translateX(-50%);
       }
   }
 
@@ -107,12 +96,12 @@
 
   .logo-scroll::before {
       left: 0;
-      background: linear-gradient(to right, {{ section.settings.section-background }};, transparent);
+      background: linear-gradient(to right, {{ section.settings.section-background }}, transparent);
   }
 
   .logo-scroll::after {
       right: 0;
-      background: linear-gradient(to left, {{ section.settings.section-background }};, transparent);
+      background: linear-gradient(to left, {{ section.settings.section-background }}, transparent);
   }
 </style>
 <div class="logo-scroll-container">
@@ -138,33 +127,18 @@
               </div>
             {% endfor %}
           </div>
-          
-          <div class="logo-group">
-            {% for logo in section.blocks %}
-              <div class="logo-wrapper">
-                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
-              </div>
-            {% endfor %}
-          </div>
           <!-- Message between logos -->
           <div class="message">
               {{ section.settings.text-heading }}
-          </div>
-          <!-- Second set of logos -->
-          <div class="logo-group">
-            {% for logo in section.blocks %}
-              <div class="logo-wrapper">
-                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
-              </div>
-            {% endfor %}
           </div>
       </div>
   </div>
 </div>
 
-{% schema %}
+{%  schema  %}
 {
-  "name": "Logo-Slider",
+  "name": "Logo Showcase",
+  "class": "section-container",
   "settings": [
     {
       "type": "checkbox",
@@ -175,35 +149,34 @@
     {
       "type": "color",
       "id": "section-background",
-      "label": "Background Color",
+      "label": "Background color",
       "default": "#000"
     },
     {
       "type": "range",
       "id": "font-size",
       "label": "Font Size",
-      "min": 6,
+      "default": 18,
+      "min": 4,
       "max": 50,
-      "step": 1,
-      "default": 18
+      "step": 1
     },
     {
       "type": "text",
       "id": "text-heading",
-      "default": "You may have seen us in",
-      "label": "Text heading"
+      "label": "Text Heading",
+      "default": "You may have seen us in"
     },
     {
       "type": "range",
       "id": "speed",
-      "label": "Speed",
       "min": 1,
       "max": 50,
       "step": 1,
-      "default": 10
+      "default": 10,
+      "label": "Animation speed"
     }
   ],
-  "class": "section-container",
   "blocks": [
     {
       "type": "logo_image",
@@ -219,7 +192,7 @@
   ],
   "presets": [
     {
-      "name": "Logo Slider"
+      "name": "Logo-Showcase"
     }
   ]
 }
