@@ -1,0 +1,206 @@
+<style>
+  .section-container {
+    background: {{ section.settings.section-background }};
+  }
+  .logo-scroll-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .logo-scroll {
+      background-color: {{ section.settings.section-background }};;
+      width: 100%;
+      height: 130px;
+      overflow: hidden;
+      position: relative;
+  }
+
+  .logo-container {
+      display: flex;
+      position: absolute;
+      animation: scroll {{ section.settings.speed }}s linear infinite;
+      height: 100%;
+  }
+
+  .logo-group {
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      gap: 4rem;
+  }
+
+  .logo-wrapper {
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+  }
+
+  .logo {
+      width: 100%;
+      height: auto;
+      filter: grayscale(1) brightness(0) invert(1);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+  }
+
+  .logo:hover {
+      opacity: 1;
+  }
+
+  .message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 300px;
+      padding: 0 1rem;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: {{ section.settings.font-size }}px;
+      font-weight: bold;
+      text-align: center;
+      flex-shrink: 0;
+  }
+
+  @keyframes scroll {
+      0% {
+          transform: translateX(0);
+          opacity: 1;
+      }
+      90% {
+          transform: translateX(-100%);
+          opacity: 1;
+      }
+      91% {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+      99% {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+      100% {
+          transform: translateX(0);
+          opacity: 0;
+      }
+  }
+
+  /* Pause animation on hover */
+  .logo-scroll:hover .logo-container {
+      animation-play-state: paused;
+  }
+
+  /* Shadow overlays */
+  .logo-scroll::before,
+  .logo-scroll::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 50px;
+      height: 100%;
+      z-index: 2;
+  }
+
+  .logo-scroll::before {
+      left: 0;
+      background: linear-gradient(to right, {{ section.settings.section-background }};, transparent);
+  }
+
+  .logo-scroll::after {
+      right: 0;
+      background: linear-gradient(to left, {{ section.settings.section-background }};, transparent);
+  }
+</style>
+<div class="logo-scroll-container">
+  <div class="logo-scroll">
+      <div class="logo-container">
+          <!-- First set of logos -->
+          <div class="logo-group">
+            {% for logo in section.blocks %}
+              <div class="logo-wrapper">
+                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
+              </div>
+            {% endfor %}
+          </div>
+          <!-- Message between logos -->
+          <div class="message">
+              {{ section.settings.text-heading }}
+          </div>
+          <!-- Second set of logos -->
+          <div class="logo-group">
+            {% for logo in section.blocks %}
+              <div class="logo-wrapper">
+                <img class="logo" src="{{ logo.settings.logo-image-picker |  image_url }}" width="600" height="400">
+              </div>
+            {% endfor %}
+          </div>
+      </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Logo-Slider",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable-grayscale-images",
+      "label": "Enable grayscale filter",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "section-background",
+      "label": "Background Color",
+      "default": "#000"
+    },
+    {
+      "type": "range",
+      "id": "font-size",
+      "label": "Font Size",
+      "min": 6,
+      "max": 50,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "text",
+      "id": "text-heading",
+      "default": "You may have seen us in",
+      "label": "Text heading"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Speed",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "class": "section-container",
+  "blocks": [
+    {
+      "type": "logo_image",
+      "name": "Logo-Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo-image-picker",
+          "label": "Logo Image Picker"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo Slider"
+    }
+  ]
+}
+{% endschema %}
