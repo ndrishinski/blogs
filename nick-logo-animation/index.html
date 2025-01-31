@@ -1,0 +1,148 @@
+<html>
+  <head>
+    <title>Logo Animation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=code" />
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Muli");
+      *:before,
+      *:after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        font-size: 62.5%;
+        background-color: #00091b;
+        font-family: "Muli", Helvetica, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        position: absolute;
+        width: 17rem;
+        height: 10rem;
+      }
+      .text {
+        color: #fff;
+        font-size: 6rem;
+        font-weight: 900;
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        transform: translatez(0);
+      }
+      .text-n {
+        left: 0;
+        transform: translateY(-4rem);
+        animation: first-half 2200ms linear infinite;
+      }
+      .text-i {
+        left: 4rem;
+        transform: translateY(-4rem);
+        animation: first-half 2200ms linear infinite;
+      }
+      .text-c {
+        left: 6rem;
+        animation: second-half 2200ms linear infinite;
+      }
+      .text-k {
+        left: 9.5rem;
+        animation: second-half 2200ms linear infinite;
+      }
+      .coast {
+        position: absolute;
+        bottom: 1.7rem;
+        width: 6.2rem;
+        height: 2.2rem;
+        display: inline-block;
+        animation: coast 2200ms linear infinite;
+        transform: translateZ(0);
+      }
+
+      .wave {
+        position: absolute;
+        width: 4.2rem;
+        height: 1.9rem;
+        border-radius: 1.1rem;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(116, 241, 252, 1) 0%,
+          rgb(50, 230, 255) 73%,
+          rgba(21, 199, 250, 1) 100%
+        );
+        will-change: width;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #00091b;
+      }
+
+      @keyframes first-half {
+        0% {
+          transform: translate3d(0, -4rem, 0);
+        }
+        40% {
+          transform: translate3d(0, -2rem, 0);
+        }
+        50% {
+          transform: translate3d(0, 0, 0);
+        }
+        60% {
+          transform: translate3d(0, -2rem, 0);
+        }
+        100% {
+          transform: translate3d(0, -4rem, 0);
+        }
+      }
+      
+      @keyframes second-half {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        10% {
+          transform: translate3d(0, -2rem, 0);
+        }
+        50% {
+          transform: translate3d(0, -4rem, 0);
+        }
+        90% {
+          transform: translate3d(0, -2rem, 0);
+        }
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @keyframes coast {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(8rem, 0, 0);
+        }
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="coast">
+        <div class="wave-rel-wrap">
+          <div class="wave">
+            <span class="material-symbols-outlined">
+              code
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="text text-n">n</div>
+      <div class="text text-i">i</div>
+      <div class="text text-c">c</div>
+      <div class="text text-k">k</div>
+    </div>
+  </body>
+</html>
