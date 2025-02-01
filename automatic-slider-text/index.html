@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <style>
+      :root {
+        --c1: #0d160b;
+        --c2: #48cae4;
+
+        --left-color: var(--c1);
+        --right-color: var(--c2);
+      }
+
+      body {
+        background-color: var(--c1);
+        margin: 0px;
+      }
+
+      .side {
+        display: grid;
+        height: 100vh;
+        overflow: hidden;
+        place-items: center;
+        position: absolute;
+        width: 100%;
+      }
+
+      .side .title {
+        font-family: "Montserrat", sans-serif;
+        font-size: 7vw;
+        font-weight: 800;
+        margin: 0px 10vw;
+        width: 80vw;
+      }
+
+      .side .fancy {
+        font-family: "Permanent Marker", cursive;
+        font-size: 1.8em;
+        line-height: 0.6em;
+      }
+
+      #left-side {
+        background-color: var(--left-color);
+        width: 60%;
+        z-index: 2;
+
+        animation: moving 3s ease-in infinite;
+      }
+
+      @keyframes moving {
+        0% {
+          width: 0;
+        }
+        50% {
+          width: 100%;
+        }
+        100% {
+          width: 0;
+        }
+      }
+
+      #left-side .title {
+        color: white;
+      }
+
+      #left-side .fancy {
+        color: var(--right-color);
+      }
+
+      #right-side {
+        background-color: var(--right-color);
+      }
+
+      #right-side .title {
+        color: var(--dark);
+      }
+
+      #right-side .fancy {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="left-side" class="side">
+      <h2 class="title">
+        Sometimes a simple header is
+        <span class="fancy">better</span>
+      </h2>
+    </div>
+    <div id="right-side" class="side">
+      <h2 class="title">
+        Sometimes a simple header is
+        <span class="fancy">worse</span>
+      </h2>
+    </div>
+  </body>
+</html>
