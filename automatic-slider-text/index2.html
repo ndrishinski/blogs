@@ -99,9 +99,9 @@
 
       function changeText() {
         text.innerText = words[count];
-        count = (count + 1) % words.length;
-        setTimeout(changeText, 3000);
         text.style.animation = "moving 3s ease-in infinite";
+        setTimeout(changeText, 3000);
+        count = (count + 1) % words.length;
       }
 
       changeText();
