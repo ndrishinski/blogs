@@ -1,0 +1,64 @@
+{
+  "product": {
+    "available": true,
+    "category": {},
+    "collections": [],
+    "compare_at_price": "25.00",
+    "compare_at_price_max": "25.00",
+    "compare_at_price_min": "25.00",
+    "compare_at_price_varies": false,
+    "content": "<h3>Are you low on health? Well we've got the potion just for you!</h3>\n<p>Just need a top up? Almost dead? In between? No need to worry because we have a range of sizes and strengths!</p>",
+    "created_at": "2022-04-13 14:46:16 -0400",
+    "description": "<h3>Are you low on health? Well we've got the potion just for you!</h3>\n<p>Just need a top up? Almost dead? In between? No need to worry because we have a range of sizes and strengths!</p>",
+    "featured_image": {
+      "src": "https://via.placeholder.com/600x600.png?text=Health+Potion"
+    },
+    "featured_media": {},
+    "first_available_variant": {},
+    "gift_card?": false,
+    "handle": "health-potion",
+    "has_only_default_variant": false,
+    "id": 6786188247105,
+    "images": [
+      {
+        "src": "https://via.placeholder.com/600x600.png?text=Health+Potion"
+      },
+      {
+        "src": "https://via.placeholder.com/600x600.png?text=Extra+Strength+Potion"
+      }
+    ],
+    "media": [],
+    "metafields": {},
+    "options": [
+      "Size",
+      "Strength"
+    ],
+    "options_by_name": {},
+    "options_with_values": [],
+    "price": "1000",
+    "price_max": "22.00",
+    "price_min": "10.00",
+    "price_varies": true,
+    "published_at": "2022-04-13 14:53:34 -0400",
+    "quantity_price_breaks_configured?": false,
+    "requires_selling_plan": false,
+    "selected_or_first_available_selling_plan_allocation": {},
+    "selected_or_first_available_variant": {},
+    "selected_selling_plan": null,
+    "selected_selling_plan_allocation": null,
+    "selected_variant": null,
+    "selling_plan_groups": [],
+    "tags": [
+      "healing",
+      "natural",
+      "potions",
+      "cool stuff"
+    ],
+    "template_suffix": "",
+    "title": "Health potion",
+    "type": {},
+    "url": {},
+    "variants": [],
+    "vendor": "Polina's Potent Potions"
+  }
+}
