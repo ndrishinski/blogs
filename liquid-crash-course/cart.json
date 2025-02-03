@@ -1,66 +1,68 @@
 {
-  "attributes": {},
-  "cart_level_discount_applications": [],
-  "checkout_charge_amount": "380.25",
-  "currency": {
-    "code": "USD",
-    "symbol": "$"
-  },
-  "discount_applications": [],
-  "discounts": [],
-  "duties_included": false,
-  "empty?": false,
-  "item_count": 2,
-  "items": [
-    {
-      "id": 101,
-      "product_id": 6786188247105,
-      "title": "Health Potion",
-      "variant_id": 201,
-      "variant_title": "Large / Extra Strength",
-      "sku": "HP-L-XS",
-      "quantity": 1,
-      "price": "25.00",
-      "original_price": "30.00",
-      "line_price": "25.00",
-      "total_discount": "5.00",
-      "grams": 500,
-      "vendor": "Polina's Potent Potions",
-      "requires_shipping": true,
-      "taxable": true,
-      "image": {
-        "src": "https://via.placeholder.com/600x600.png?text=Health+Potion"
-      },
-      "url": "/products/health-potion"
+  "cart": {
+    "attributes": {},
+    "cart_level_discount_applications": [],
+    "checkout_charge_amount": "380.25",
+    "currency": {
+      "code": "USD",
+      "symbol": "$"
     },
-    {
-      "id": 102,
-      "product_id": 7894561230123,
-      "title": "Mana Potion",
-      "variant_id": 202,
-      "variant_title": "Medium / Regular Strength",
-      "sku": "MP-M-RS",
-      "quantity": 2,
-      "price": "99.99",
-      "original_price": "129.99",
-      "line_price": "199.98",
-      "total_discount": "30.00",
-      "grams": 800,
-      "vendor": "Polina's Potent Potions",
-      "requires_shipping": true,
-      "taxable": true,
-      "image": {
-        "src": "https://via.placeholder.com/600x600.png?text=Mana+Potion"
+    "discount_applications": [],
+    "discounts": [],
+    "duties_included": false,
+    "empty?": false,
+    "item_count": 2,
+    "items": [
+      {
+        "id": 101,
+        "product_id": 6786188247105,
+        "title": "Health Potion",
+        "variant_id": 201,
+        "variant_title": "Large / Extra Strength",
+        "sku": "HP-L-XS",
+        "quantity": 1,
+        "price": "25.00",
+        "original_price": "30.00",
+        "line_price": "25.00",
+        "total_discount": "5.00",
+        "grams": 500,
+        "vendor": "Polina's Potent Potions",
+        "requires_shipping": true,
+        "taxable": true,
+        "image": {
+          "src": "https://via.placeholder.com/600x600.png?text=Health+Potion"
+        },
+        "url": "/products/health-potion"
       },
-      "url": "/products/mana-potion"
-    }
-  ],
-  "items_subtotal_price": "422.49",
-  "note": "Hello this is a note",
-  "original_total_price": "424.99",
-  "requires_shipping": true,
-  "taxes_included": false,
-  "total_discount": "44.74",
-  "total_price": "380.25",
-  "total_weight": 1300
+      {
+        "id": 102,
+        "product_id": 7894561230123,
+        "title": "Mana Potion",
+        "variant_id": 202,
+        "variant_title": "Medium / Regular Strength",
+        "sku": "MP-M-RS",
+        "quantity": 2,
+        "price": "99.99",
+        "original_price": "129.99",
+        "line_price": "199.98",
+        "total_discount": "30.00",
+        "grams": 800,
+        "vendor": "Polina's Potent Potions",
+        "requires_shipping": true,
+        "taxable": true,
+        "image": {
+          "src": "https://via.placeholder.com/600x600.png?text=Mana+Potion"
+        },
+        "url": "/products/mana-potion"
+      }
+    ],
+    "items_subtotal_price": "422.49",
+    "note": "Hello this is a note",
+    "original_total_price": "424.99",
+    "requires_shipping": true,
+    "taxes_included": false,
+    "total_discount": "44.74",
+    "total_price": "380.25",
+    "total_weight": 1300
+  }
 }
