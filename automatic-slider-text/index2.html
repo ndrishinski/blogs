@@ -32,7 +32,7 @@
       }
 
       .side .fancy {
-        margin-left: 15px;
+        margin-left: 20px;
       }
 
       #left-side {
@@ -50,6 +50,7 @@
         z-index: 2;
         width: 100%;
         background-color: var(--dark);
+        animation: moving 3s ease-in infinite;
       }
 
       @keyframes moving {
@@ -99,7 +100,6 @@
 
       function changeText() {
         text.innerText = words[count];
-        text.style.animation = "moving 3s ease-in infinite";
         setTimeout(changeText, 3000);
         count = (count + 1) % words.length;
       }
