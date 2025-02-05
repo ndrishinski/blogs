@@ -1,0 +1,244 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+  .section-container {
+    height: 500px;
+    width: 100vw;
+    font-family: "Montserrat", serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: normal;
+  }
+
+  .container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    background: {{ section.settings.background }};
+  }
+
+  .subcontainer {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .subcontainer-first {
+    position: relative;
+  }
+
+  .subcontainer-second {
+    display: flex!important;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wrapper {
+    max-width: 100%;
+    max-height: 100%;
+    font-size: 8rem;
+
+    padding-top: 3rem;
+    padding-left: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .wrapper > p {
+    font-size: 2rem;
+  }
+
+  .wrapper .text {
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 8rem;
+    line-height: normal;
+  }
+
+  .wrapper .change {
+    height: 37px;
+    width: 90px;
+    overflow: hidden;
+  }
+
+  .wrapper span {
+    position: absolute;
+    display: block;
+    opacity: 0;
+    height: 37px;
+    animation: change 10s linear infinite 0s;
+    text-wrap: nowrap;
+  }
+
+  .wrapper span:nth-child(2) {
+    animation-delay: 2.5s;
+  }
+
+  .wrapper span:nth-child(3) {
+    animation-delay: 5s;
+  }
+
+  .wrapper span:nth-child(4) {
+    animation-delay: 7.5s;
+  }
+
+  @keyframes change {
+    0% {
+      opacity: 0;
+    }
+
+    5% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    10% {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    25% {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    30% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    80% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  
+  @media only screen and (max-width: 1096px) {
+    .wrapper {
+      font-size: 6rem;
+    }
+  }
+  
+  @media only screen and (max-width: 500px) {
+    .container {
+      flex-direction: column;
+    }
+    .wrapper {
+      font-size: 4rem;
+    }
+
+    .wrapper .text {
+      margin-top: 3rem;
+    }
+  }
+  @media only screen and (min-width: 1660px) {
+    .wrapper {
+      left: 6rem;
+    }
+  }
+
+  .subcontainer-second img {
+    max-width: 100%;
+    height: auto;
+    {% if section.settings.img-size > 0 %}
+    width: {{ section.settings.img-size }}rem;
+    {% endif %}
+  }
+</style>
+
+<div class="container">
+  <div class="subcontainer subcontainer-first">
+    <div class="wrapper">
+      <div class="change">
+        {% for block in section.blocks %}
+          {% if block.type == 'animated-headings' %}
+            <span style="color: {{ block.settings.text-color }}">{{ block.settings.heading-text }}</span>
+          {% endif %}
+        {% endfor  %}
+      </div>
+      <div class="text">{{ section.settings.heading-1 }}</div>
+      <p>{{ section.settings.text-1 }}</p>
+    </div>
+  </div>
+  <div class="subcontainer subcontainer-second">
+    <img src="{{ section.settings.image |  image_url  }}" />
+  </div>
+</div>
+
+{% schema %}
+{
+"name": "Scrolling Heading",
+"class": "section-container",
+"settings": [
+  {
+    "type": "text",
+    "id": "heading-1",
+    "label": "Static Heading",
+    "default": "Hope you love it."
+  },
+  {
+    "type": "text",
+    "id": "text-1",
+    "label": "Static Text",
+    "default": "Customized care starts right here."
+  },
+  {
+    "type": "image_picker",
+    "id": "image",
+    "label": "Image"
+  },
+  {
+    "type": "range",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "label": "Image size",
+    "id": "img-size",
+    "default": 0
+  },
+  {
+    "type": "color",
+    "id": "background",
+    "label": "Section background",
+    "default": "#f7ede2"
+  }
+],
+"blocks": [
+  {
+    "name": "Animated Headings",
+    "type": "animated-headings",
+    "limit": 4,
+    "settings": [
+      {
+        "type": "text",
+        "label": "Heading",
+        "default": "Better Health",
+        "id": "heading-text"
+      },
+      {
+        "type": "color",
+        "default": "#000",
+        "label": "Text Color",
+        "id": "text-color"
+      }
+    ]
+  }
+],
+"presets": [
+{
+"name": "Scrolling Heading"
+}
+]
+}
+{% endschema %}
