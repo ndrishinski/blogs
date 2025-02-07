@@ -1,0 +1,291 @@
+<style>
+  /* Reset and base styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+    /* Stats section styles */
+    .stats-section {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif;
+    line-height: 1.5;
+    width: 100%;
+    height: 200px;
+    background-color: {{ section.settings.background-color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .stat-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .stat-item:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .stat-icon {
+    width: {{ section.settings.icon-size }}px;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-number {
+    /* font-size: 2.875rem; */
+    font-size: {{ section.settings.number-size }}rem;
+    font-weight: 700;
+    color: {{ section.settings.font-color }};
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-text {
+    /* font-size: 1.875rem; */
+    font-size: {{ section.settings.text-size }}rem;
+    color: {{ section.settings.font-color }};
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .stats-section {
+      height: auto;
+      padding: 2rem 0;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <img class="stat-icon" src="{{ section.settings.image-1 | image_url }}" />
+        <h3 class="stat-number">
+          <span class="count-up" data-value="{{ section.settings.image-1-number }}" data-delay="{{ section.settings.image-1-speed }}">0</span>
+        </h3>
+        <p class="stat-text">{{ section.settings.image-1-text }}</p>
+      </div>
+      <div class="stat-item">
+        <img class="stat-icon" src="{{ section.settings.image-2 | image_url }}" />
+        <h3 class="stat-number">
+          <span class="count-up" data-value="{{ section.settings.image-2-number }}" data-delay="{{ section.settings.image-2-speed }}">0</span>
+        </h3>
+        <p class="stat-text">{{ section.settings.image-2-text }}</p>
+      </div>
+      <div class="stat-item">
+        <img class="stat-icon" src="{{ section.settings.image-3 | image_url }}" />
+        <h3 class="stat-number">
+          <span class="count-up" data-value="{{ section.settings.image-3-number }}" data-delay="{{ section.settings.image-3-speed }}">0</span>/5
+          customers
+        </h3>
+        <p class="stat-text">{{ section.settings.image-3-text }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let all = document.querySelectorAll(".count-up");
+
+    function doUpdate(num, element) {
+      element.innerHTML = num;
+    }
+
+    function animate(number, delay = 100, element) {
+      let i = 0;
+      const interval = setInterval(() => {
+        doUpdate(i, element);
+        if (i >= number) {
+          clearInterval(interval);
+        }
+        i++;
+      }, delay);
+    }
+
+    // New Intersection Observer to trigger animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animate(
+              Number(entry.target.dataset.value),
+              Number(entry.target.dataset.delay),
+              entry.target
+            );
+            observer.unobserve(entry.target); // Stop observing after animation starts
+          }
+        });
+      },
+      {
+        threshold: 1.0,
+      }
+    );
+
+    all.forEach((i) => {
+      observer.observe(i); // Observe each count-up element
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Count Up Animation",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image-1",
+      "label": "Image 1"
+    },
+    {
+      "type": "number",
+      "id": "image-1-number",
+      "label": "First Final Number",
+      "default": 200
+    },
+    {
+      "type": "number",
+      "id": "image-1-speed",
+      "label": "First Counting Delay",
+      "default": 100
+    },
+    {
+      "type": "text",
+      "id": "image-1-text",
+      "label": "First Image Text",
+      "default": "happy customers and counting!"
+    },
+    {
+      "type": "image_picker",
+      "id": "image-2",
+      "label": "Image 2"
+    },
+    {
+      "type": "number",
+      "id": "image-2-number",
+      "label": "Second Final Number",
+      "default": 135
+    },
+    {
+      "type": "number",
+      "id": "image-2-speed",
+      "label": "Second Counting Delay",
+      "default": 100
+    },
+    {
+      "type": "text",
+      "id": "image-2-text",
+      "label": "Second Image Text",
+      "default": "report improved overall health."
+    },
+    {
+      "type": "image_picker",
+      "id": "image-3",
+      "label": "Image 3"
+    },
+    {
+      "type": "number",
+      "id": "image-3-number",
+      "label": "Third Final Number",
+      "default": 135
+    },
+    {
+      "type": "number",
+      "id": "image-3-speed",
+      "label": "Third Counting Delay",
+      "default": 100
+    },
+    {
+      "type": "text",
+      "id": "image-3-text",
+      "label": "Third Image Text",
+      "default": "recommend our products to family."
+    },
+    {
+      "type": "range",
+      "id": "icon-size",
+      "label": "Icon Size",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background Color",
+      "default": "#ecf1f3"
+    },
+    {
+      "type": "color",
+      "id": "font-color",
+      "label": "Font Color",
+      "default": "#1e306e"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 5,
+      "step": 0.2,
+      "default": 2.8,
+      "id": "number-size",
+      "label": "Number Size"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 5,
+      "step": 0.2,
+      "default": 1.8,
+      "id": "text-size",
+      "label": "Number Size"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Count Up Animation"
+    }
+  ]
+}
+{% endschema %}
