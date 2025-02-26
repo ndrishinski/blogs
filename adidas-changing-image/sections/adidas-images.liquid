@@ -1,0 +1,193 @@
+<style>
+  #adidas-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+  }
+
+  #adidas-section .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  #adidas-section .product-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  #adidas-section .product-card:hover {
+    transform: translateY(-5px);
+  }
+
+  #adidas-section .product-image {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    /* 1:1 Aspect Ratio */
+    overflow: hidden;
+  }
+
+  #adidas-section .image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+    display: block!important;
+  }
+
+  #adidas-section .product-card h2 {
+    font-size: 2rem;
+    margin: 1rem 1rem 0.5rem;
+  }
+
+  #adidas-section .product-card p {
+    font-size: 1.5rem;
+    color: #666;
+    margin: 0 1rem 1rem;
+  }
+
+  #adidas-section .shop-now {
+    display: inline-block;
+    margin: 0 1rem 1rem;
+    padding: 0.5rem 0;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.3rem;
+    border-bottom: 2px solid #000;
+    transition: border-color 0.3s ease;
+  }
+
+  #adidas-section .shop-now:hover {
+    border-color: transparent;
+  }
+
+  @media (max-width: 768px) {
+    #adidas-section .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<div class="container" id="adidas-section">
+  <div class="product-grid">
+    {% for block in section.blocks %}
+      <div class="product-card">
+        <div class="product-image">
+          <div class="image-container" style="background-image: url('{{ block.settings.card_image_1 | image_url: width: 450, crop: 'center' }}'); background-size: cover; background-position: center;"
+          {% if block.settings.card_image_1 %}data-first="{{ block.settings.card_image_1 | image_url: width: 450, crop: 'center' }}"{% endif %}
+          {% if block.settings.card_image_2 %}data-second="{{ block.settings.card_image_2 | image_url: width: 450, crop: 'center' }}"{% endif %}
+          {% if block.settings.card_image_3 %}data-third="{{ block.settings.card_image_3 | image_url: width: 450, crop: 'center' }}"{% endif %}
+          {% if block.settings.card_image_4 %}data-fourth="{{ block.settings.card_image_4 | image_url: width: 450, crop: 'center' }}"{% endif %}
+            data-interval="{{ block.settings.interval }}"
+          ></div>
+        </div>
+        <h2>{{ block.settings.card_title }}</h2>
+        <p>{{ block.settings.card_subheading }}</p>
+        <a href="collections/{{ block.settings.collection-link }}" class="shop-now">{{ section.settings.cta-button }}</a>
+        </div>
+      {% endfor %}
+  </div>
+</div>
+<script>
+    function initializeProductCards() {
+      const productCards = document.querySelectorAll('.image-container')
+      productCards.forEach((card, index) => {
+        const firstImage = card.getAttribute('data-first');
+        const secondImage = card.getAttribute('data-second');
+        const thirdImage = card.getAttribute('data-third');
+        const fourthImage = card.getAttribute('data-fourth');
+        const interval = card.getAttribute('data-interval');
+
+        const imagesArray = [firstImage, secondImage, thirdImage, fourthImage].filter(Boolean); // Filter out undefined or null values
+
+        let currentImageIndex = 0;
+
+          setInterval(() => {
+            card.style.backgroundImage = `url(${imagesArray[currentImageIndex]})`;
+            currentImageIndex = (currentImageIndex + 1) % imagesArray.length; // Rotate to the next image, restarting from the first after the last
+          }, interval);
+      })
+    }
+
+  document.addEventListener("DOMContentLoaded", initializeProductCards)
+</script>
+{% schema %}
+{
+  "name": "Adidas Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "cta-button",
+      "label": "Button Text",
+      "default": "SHOP NOW"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "limit": 4,
+      "name": "Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "card_title",
+          "label": "Card Title",
+          "default": "Super Lightweight Shoe"
+        },
+        {
+          "type": "text",
+          "id": "card_subheading",
+          "label": "Card Subtext",
+          "default": "Everything that is essential. Nothing that is not."
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image_1",
+          "label": "First Card Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image_2",
+          "label": "Second Card Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image_3",
+          "label": "Third Card Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image_4",
+          "label": "Fourth Card Image"
+        },
+        {
+          "type": "number",
+          "id": "interval",
+          "label": "Interval to swap images",
+          "default": 1200
+        },
+        {
+          "type": "collection",
+          "id": "collection-link",
+          "label": "Collection Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Adidas Section"
+    }
+  ]
+}
+{% endschema %}
