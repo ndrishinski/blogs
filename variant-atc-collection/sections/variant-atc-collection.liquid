@@ -1,0 +1,331 @@
+<style>
+  #collection-atc-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+#collection-atc-container .product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+#collection-atc-container .product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: {{ section.settings.card-width }}px;
+}
+
+#collection-atc-container .product-image {
+  position: relative;
+  background-color: #f0f0f0;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+#collection-atc-container .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  #collection-atc-container .product-card {
+    max-width: 100%;
+  }
+}
+
+#collection-atc-container .color-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+#collection-atc-container .color-option {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+#collection-atc-container .color-option.selected::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 2px solid #000;
+}
+
+#collection-atc-container .product-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+s}
+
+#collection-atc-container .product-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+#collection-atc-container .product-price {
+  font-size: 1.5rem;
+}
+
+#collection-atc-container .product-form {
+  width: 100%;
+}
+
+#collection-atc-container .add-to-cart-btn {
+  width: 100%;
+  padding: 1rem 0;
+  background-color: {{ section.settings.atc-button-color }};
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#collection-atc-container .add-to-cart-btn:hover:not([disabled]) {
+  background-color: {{ section.settings.atc-button-hover-color}};
+}
+
+#collection-atc-container .add-to-cart-btn[disabled] {
+  background-color: #999;
+  cursor: not-allowed;
+}
+</style>
+<div class="container" id="collection-atc-container">
+  <div class="product-grid">
+    {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+      <div class="product-card" data-product-id="{{ product.id }}">
+        <div class="product-image">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | img_url: '600x600', crop: 'center' }}" alt="{{ product.title | escape }}">
+          {% else %}
+            <img src="{{ 'product-placeholder.png' | asset_url }}" alt="{{ product.title | escape }}">
+          {% endif %}
+        </div>
+        
+        <div class="color-options">
+            {% if product.options_by_name['Color'] %}
+            {% assign color_option = product.options_by_name['Color'] %}
+            {% for value in color_option.values %}
+              {% assign first_available_variant = product.variants | where: "option1", value | first %}
+              <button 
+                class="color-option {% if forloop.first %}selected{% endif %}" 
+                style="background-color: {{ first_available_variant.metafields.custom.variant_color.value }}; border: 1px solid #888;" 
+                data-color="{{ first_available_variant.metafields.custom.variant_color.value | escape }}" 
+                data-variant-id="{{ first_available_variant.id }}"
+                data-image-url="{{ first_available_variant.image | img_url: '600x600' }}" 
+                data-prod-id="{{ product.id }}"
+                data-variant-price="{{ first_available_variant.price |  money_without_trailing_zeros}}"
+                aria-label="Select {{ value }} color">
+              </button>
+            {% endfor %}
+          {% else %}
+            <div class="color-option">
+              {% comment %} reserve space for ui  {% endcomment %}
+            </div>
+          {% endif %}
+          </div>
+          
+        <div class="product-info">
+          <h3 class="product-title">{{ product.title }}</h3>
+          <p class="product-price product-price-{{ product.id }}">{{ product.price | money_without_trailing_zeros }}</p>
+        </div>
+        
+        {% form 'product', product, class: 'product-form', data-product-form: '' %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="js-variant-id">
+          <button type="submit" class="add-to-cart-btn" {% unless product.available %}disabled{% endunless %}>
+            {% if product.available %}
+              Add to Cart
+            {% else %}
+              Sold Out
+            {% endif %}
+          </button>
+        {% endform %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  // Initialize color options
+  initColorOptions();
+  
+  // Initialize add to cart functionality
+  initAddToCart();
+});
+
+function initColorOptions() {
+  const colorOptions = document.querySelectorAll('.color-option');
+  let eventListener = '{{ section.settings.variant-event-listener }}'
+  colorOptions.forEach(option => {
+    option.addEventListener(eventListener, () => {
+      const productCard = option.closest('.product-card');
+      
+      // Update selected state
+      const siblings = Array.from(option.parentElement.children);
+      siblings.forEach(sibling => sibling.classList.remove('selected'));
+      option.classList.add('selected');
+      
+      // Update variant ID in the form
+      const variantId = option.getAttribute('data-variant-id');
+      const variantInput = productCard.querySelector('.js-variant-id');
+      if (variantInput) {
+        variantInput.value = variantId;
+      }
+
+      const prodCard = option.getAttribute('data-prod-id');
+      const variantPrice = option.getAttribute('data-variant-price');
+      const variantPriceShow = document.querySelector(`.product-price-${prodCard}`);
+      if (variantPrice && variantPriceShow && prodCard) {
+        variantPriceShow.textContent = `${variantPrice}`;
+      }
+      
+      // Update product image based on selected variant
+      const productImage = productCard.querySelector('.product-image img');
+      const selectedImageUrl = option.getAttribute('data-image-url'); // Assuming you have a data attribute for the image URL
+
+      if (productImage && selectedImageUrl) {
+        productImage.src = selectedImageUrl; // Update the image source
+      }
+      
+      // Get color name for analytics
+      const colorName = option.getAttribute('data-color');
+      const productTitle = productCard.querySelector('.product-title').textContent;
+      
+      // You could send this to analytics or use it for other purposes
+      console.log(`Selected ${colorName} for ${productTitle}`);
+    });
+  });
+}
+
+function initAddToCart() {
+  const productForms = document.querySelectorAll('[data-product-form]');
+  
+  productForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitButton = form.querySelector('.add-to-cart-btn');
+      const originalButtonText = submitButton.textContent;
+      submitButton.textContent = 'Adding...';
+      
+      // Get form data
+      const formData = new FormData(form);
+      
+      // Add to cart using Shopify AJAX API
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitButton.textContent = 'Added!';
+        
+        // Update cart count in header (if you have one)
+        updateCartCount();
+        
+        setTimeout(() => {
+          submitButton.textContent = originalButtonText;
+        }, 2000);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        submitButton.textContent = 'Error - Try Again';
+        
+        setTimeout(() => {
+          submitButton.textContent = originalButtonText;
+        }, 2000);
+      });
+    });
+  });
+}
+
+function updateCartCount() {
+  // Fetch updated cart data
+  fetch('/cart.js')
+    .then(response => response.json())
+    .then(cart => {
+      // Update cart count in header (if you have one)
+      window.location.href = '/cart'
+    })
+    .catch(error => console.error('Error fetching cart:', error));
+}
+</script>
+
+{% schema %}
+{
+  "name": "Collection ATC",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 3,
+      "max": 99,
+      "step": 1,
+      "default": 3,
+      "label": "Products to show"
+    },
+    {
+      "type": "color",
+      "id": "atc-button-color",
+      "default": "#000000",
+      "label": "Button Color"
+    },
+    {
+      "type": "color",
+      "id": "atc-button-hover-color",
+      "default": "#333",
+      "label": "Button Hover Color"
+    },
+    {
+      "type": "radio",
+      "label": "Change Variant On:",
+      "id": "variant-event-listener",
+      "default": "click",
+      "options": [
+        {
+          "value": "click",
+          "label": "Click"
+        },
+        {
+          "value": "mouseover",
+          "label": "Hover"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "label": "Card width",
+      "default": 350,
+      "id": "card-width",
+      "max": 500,
+      "min": 100,
+      "step": 5
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection ATC"
+    }
+  ]
+}
+{% endschema %}
