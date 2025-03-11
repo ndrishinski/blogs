@@ -54,6 +54,17 @@
   position: relative;
 }
 
+#collection-atc-container .variant-option {
+  background: #fff;
+  color: #000;
+  padding: 2px 10px;
+}
+
+#collection-atc-container .variant-selected {
+  background: #000;
+  color: #fff;
+}
+
 #collection-atc-container .color-option.selected::after {
   content: "";
   position: absolute;
@@ -107,14 +118,22 @@ s}
 <div class="container" id="collection-atc-container">
   <div class="product-grid">
     {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
-      <div class="product-card" data-product-id="{{ product.id }}">
-        <div class="product-image">
+      <div class="product-card" data-product-id="{{ product.id }}" data-product-variants="{{ product.variants | json | escape }}"
+    {% if product.options_by_name['Color'] %}
+      data-selected-color="{{ product.selected_or_first_available_variant.option1 }}"
+      data-selected-name="{{ product.selected_or_first_available_variant.option2 }}"
+    {% else if %}
+      data-selected-color=""
+      data-selected-name="{{ product.selected_or_first_available_variant.option1 }}"
+    {% endif %}
+      >
+        <a class="product-image" href="{{ product.url }}">
           {% if product.featured_image %}
             <img src="{{ product.featured_image | img_url: '600x600', crop: 'center' }}" alt="{{ product.title | escape }}">
           {% else %}
             <img src="{{ 'product-placeholder.png' | asset_url }}" alt="{{ product.title | escape }}">
           {% endif %}
-        </div>
+        </a>
         
         <div class="color-options">
             {% if product.options_by_name['Color'] %}
@@ -125,6 +144,7 @@ s}
                 class="color-option {% if forloop.first %}selected{% endif %}" 
                 style="background-color: {{ first_available_variant.metafields.custom.variant_color.value }}; border: 1px solid #888;" 
                 data-color="{{ first_available_variant.metafields.custom.variant_color.value | escape }}" 
+                data-name="{{ first_available_variant.option1 }}"
                 data-variant-id="{{ first_available_variant.id }}"
                 data-image-url="{{ first_available_variant.image | img_url: '600x600' }}" 
                 data-prod-id="{{ product.id }}"
@@ -137,6 +157,27 @@ s}
               {% comment %} reserve space for ui  {% endcomment %}
             </div>
           {% endif %}
+          </div>
+
+          <div class="variant-options">
+            {% for option in product.options %}
+              {% if option != 'Color' and option != 'Title' %}
+                {% assign other_option = product.options_by_name[option] %}
+                {% for value in other_option.values %}
+                  {% assign variant = product.variants | where: 'option2', value | first %}
+                  <button 
+                    class="variant-option {% if forloop.first %}variant-selected{% endif %}" 
+                    data-variant-id="{{ variant.id }}"
+                    data-name="{{ value }}"
+                    aria-label="Select {{ value }} {{ option.name }}"
+                    data-prod-id="{{ product.id }}"
+                    data-image-url="{{ first_available_variant.image | img_url: '600x600' }}" 
+                    data-variant-price="{{ first_available_variant.price |  money_without_trailing_zeros}}">
+                    {{ value }}
+                  </button>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
           </div>
           
         <div class="product-info">
@@ -163,10 +204,68 @@ s}
   document.addEventListener('DOMContentLoaded', () => {
   // Initialize color options
   initColorOptions();
+
+  // Initialize variant options
+  initVariantOptions();
   
   // Initialize add to cart functionality
   initAddToCart();
+
 });
+
+function findVariantId(variants, productCard) {
+  let ans
+  const selected_color = productCard.getAttribute('data-selected-color')
+  const selected_variant = productCard.getAttribute('data-selected-name')
+    if (selected_color && selected_variant) {
+      ans = variants.find(i => i.option1 === selected_color && i.option2 === selected_variant)
+    } else if (selected_color && !selected_variant) {
+      ans = variants.find(i => i.option1 === selected_color)
+    } else if (!selected_color && selected_variant) {
+      ans = variants.find(i => i.option1 === selected_variant)
+    } else {
+      ans = variants[0]
+    }
+    return ans
+}
+
+function initVariantOptions() {
+    const variantOptions = document.querySelectorAll('.variant-option');
+    variantOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const productCard = option.closest('.product-card');
+        // Update selected state
+        const siblings = Array.from(option.parentElement.children);
+        siblings.forEach(sibling => sibling.classList.remove('variant-selected'));
+        option.classList.add('variant-selected');
+
+        // Update variant ID in the form
+        const temp = option.getAttribute('data-name')
+        productCard.setAttribute('data-selected-name', temp)
+
+        let vari = findVariantId(JSON.parse(productCard.getAttribute('data-product-variants')), productCard)
+
+        const variantInput = productCard.querySelector('.js-variant-id');
+        if (variantInput) {
+          variantInput.value = vari.id
+        }
+        const prodCard = option.getAttribute('data-prod-id');
+        const variantPriceShow = document.querySelector(`.product-price-${prodCard}`);
+        if (variantPriceShow && prodCard) {
+          variantPriceShow.textContent = `$${vari.price / 100}`;
+        }
+
+        const productImage = productCard.querySelector('.product-image img');
+        const spareSelectedImageUrl = option.getAttribute('data-image-url'); // Assuming you have a data attribute for the image URL
+        const selectedImageUrl = vari.featured_image.src || spareSelectedImageUrl
+
+        if (productImage && selectedImageUrl) {
+          productImage.src = selectedImageUrl;
+        }
+
+      });
+    });
+  }
 
 function initColorOptions() {
   const colorOptions = document.querySelectorAll('.color-option');
@@ -174,29 +273,32 @@ function initColorOptions() {
   colorOptions.forEach(option => {
     option.addEventListener(eventListener, () => {
       const productCard = option.closest('.product-card');
-      
       // Update selected state
       const siblings = Array.from(option.parentElement.children);
       siblings.forEach(sibling => sibling.classList.remove('selected'));
       option.classList.add('selected');
+
+      const temp = option.getAttribute('data-name')
+      productCard.setAttribute('data-selected-color', temp)
+
+      let vari = findVariantId(JSON.parse(productCard.getAttribute('data-product-variants')), productCard)
       
       // Update variant ID in the form
-      const variantId = option.getAttribute('data-variant-id');
       const variantInput = productCard.querySelector('.js-variant-id');
       if (variantInput) {
-        variantInput.value = variantId;
+        variantInput.value = vari.id;
       }
 
       const prodCard = option.getAttribute('data-prod-id');
-      const variantPrice = option.getAttribute('data-variant-price');
       const variantPriceShow = document.querySelector(`.product-price-${prodCard}`);
-      if (variantPrice && variantPriceShow && prodCard) {
-        variantPriceShow.textContent = `${variantPrice}`;
+      if (variantPriceShow && prodCard) {
+        variantPriceShow.textContent = `$${vari.price / 100}`;
       }
       
       // Update product image based on selected variant
       const productImage = productCard.querySelector('.product-image img');
-      const selectedImageUrl = option.getAttribute('data-image-url'); // Assuming you have a data attribute for the image URL
+      const spareSelectedImageUrl = option.getAttribute('data-image-url'); // Assuming you have a data attribute for the image URL
+      const selectedImageUrl = vari.featured_image.src || spareSelectedImageUrl
 
       if (productImage && selectedImageUrl) {
         productImage.src = selectedImageUrl; // Update the image source
