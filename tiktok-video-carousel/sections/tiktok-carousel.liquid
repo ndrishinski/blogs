@@ -1,0 +1,531 @@
+<style>
+  .tiktok-carousel-section {
+    background-color: #fff;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tiktok-carousel-section .container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem;
+    position: relative;
+  }
+
+  /* Carousel Styles */
+  .tiktok-carousel-section .carousel-container {
+    position: relative;
+    min-height: 800px;
+    overflow: hidden;
+  }
+
+  .tiktok-carousel-section .carousel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tiktok-carousel-section .carousel-item {
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+  }
+
+  /* Card Styles */
+  .tiktok-carousel-section .card {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: #fff;
+  }
+
+  .tiktok-carousel-section .video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9/16;
+  }
+
+  .tiktok-carousel-section .video-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .tiktok-carousel-section .overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+
+ .tiktok-carousel-section .title {
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-top: auto;
+  }
+
+  .tiktok-carousel-section .controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .tiktok-carousel-section .control-btn {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .tiktok-carousel-section .control-btn:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .tiktok-carousel-section .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: white;
+  }
+
+  /* Product Info Styles */
+  .tiktok-carousel-section .product-info {
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .tiktok-carousel-section .product-thumbnail {
+    width: 6rem;
+    height: 6rem;
+    flex-shrink: 0;
+    background-color: #4D5D53;
+    border-radius: 0.125rem;
+    overflow: hidden;
+  }
+
+  .tiktok-carousel-section .product-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .tiktok-carousel-section .product-details {
+    flex: 1;
+  }
+
+  .tiktok-carousel-section .product-details h3 {
+    /* font-size: 0.875rem; */
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .tiktok-carousel-section .product-details h3:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .tiktok-carousel-section .product-details p {
+    /* font-size: 0.875rem; */
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  /* Navigation Buttons */
+  .tiktok-carousel-section .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    background-color: white;
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: background-color 0.2s;
+    background: #000;
+  }
+
+  .tiktok-carousel-section .nav-btn:hover {
+    background-color: #f3f4f6;
+  }
+
+  .tiktok-carousel-section .prev-btn {
+    left: 1rem;
+  }
+
+  .tiktok-carousel-section .next-btn {
+    right: 1rem;
+  }
+
+  /* Pagination Dots */
+  .tiktok-carousel-section .pagination {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .tiktok-carousel-section .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #d1d5db;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tiktok-carousel-section .dot.active {
+    width: 1rem;
+    background-color: #1f2937;
+  }
+
+  /* Carousel Item States */
+  .tiktok-carousel-section .carousel-item[data-state="active"] {
+    z-index: 20;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="active"] .card {
+    width: 320px;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="prev"] {
+    z-index: 10;
+    transform: translateX(calc(-100% - 2rem)) scale(0.85);
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="prev"]:hover {
+    opacity: 0.9;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="prev"] .card {
+    width: 280px;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="next"] {
+    z-index: 10;
+    transform: translateX(calc(100% + 2rem)) scale(0.85);
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="next"]:hover {
+    opacity: 0.9;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="next"] .card {
+    width: 280px;
+  }
+
+  .tiktok-carousel-section .carousel-item[data-state="hidden"] {
+    display: none;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .tiktok-carousel-section .carousel-container {
+      height: 600px;
+    }
+    
+    .tiktok-carousel-section .carousel-item[data-state="active"] .card {
+      width: 280px;
+    }
+    
+    .tiktok-carousel-section .carousel-item[data-state="prev"] .card,
+    .tiktok-carousel-section .carousel-item[data-state="next"] .card {
+      width: 240px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tiktok-carousel-section .carousel-container {
+      height: 500px;
+    }
+    
+    .tiktok-carousel-section .carousel-item[data-state="active"] .card {
+      width: 240px;
+    }
+    
+    .tiktok-carousel-section .carousel-item[data-state="prev"],
+    .tiktok-carousel-section .carousel-item[data-state="next"] {
+      display: none;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="carousel-container">
+    <div class="carousel">
+      <!-- Video 1 -->
+      <div class="carousel-item" data-index="0">
+        <div class="card">
+          <div class="video-container">
+            {{ section.settings.video-1 | video_tag: loop: true, muted: true, controls: true, class: "video-image" }}
+          </div>
+          <div class="product-info">
+            <div class="product-thumbnail">
+              <img src="{{ section.settings.product-1.featured_image | image_url }}" alt="{{ section.settings.product-1.title }}">
+            </div>
+            <div class="product-details">
+              <h3 onclick="navigateAway('{{ section.settings.product-1.url }}')">{{ section.settings.product-1.title }}</h3>
+              <p>{{ section.settings.product-1.price | money_without_trailing_zeros}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="carousel-item" data-index="1">
+        <div class="card">
+          <div class="video-container">
+            {{ section.settings.video-2 | video_tag: loop: true, muted: true, controls: true, class: "video-image" }}
+          </div>
+          <div class="product-info">
+            <div class="product-thumbnail">
+              <img src="{{ section.settings.product-2.featured_image | image_url }}" alt="{{ section.settings.product-2.title }}">
+            </div>
+            <div class="product-details">
+              <h3 onclick="navigateAway('{{ section.settings.product-2.url }}')">{{ section.settings.product-2.title }}</h3>
+              <p>{{ section.settings.product-2.price | money_without_trailing_zeros}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="carousel-item" data-index="2">
+        <div class="card">
+          <div class="video-container">
+            {{ section.settings.video-3 | video_tag: loop: true, muted: true, controls: true, class: "video-image" }}
+          </div>
+          <div class="product-info">
+          <div class="product-info">
+            <div class="product-thumbnail">
+              <img src="{{ section.settings.product-3.featured_image | image_url }}" alt="{{ section.settings.product-3.title }}">
+            </div>
+            <div class="product-details">
+              <h3 onclick="navigateAway('{{ section.settings.product-3.url }}')">{{ section.settings.product-3.title }}</h3>
+              <p>{{ section.settings.product-3.price | money_without_trailing_zeros}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-btn prev-btn" aria-label="Previous slide">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="m15 18-6-6 6-6"></path></svg>
+    </button>
+    <button class="nav-btn next-btn" aria-label="Next slide">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="m9 18 6-6-6-6"></path></svg>
+    </button>
+
+    <!-- Pagination Dots -->
+    <div class="pagination">
+      <button class="dot" data-index="0" aria-label="Go to slide 1"></button>
+      <button class="dot active" data-index="1" aria-label="Go to slide 2"></button>
+      <button class="dot" data-index="2" aria-label="Go to slide 3"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get carousel elements
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const dots = document.querySelectorAll('.dot');
+    
+    // Set initial active index
+    let activeIndex = 1; // Start with middle item active
+    
+    // Initialize carousel
+    updateCarousel();
+    
+    // Event listeners for navigation
+    prevBtn.addEventListener('click', goToPrev);
+    nextBtn.addEventListener('click', goToNext);
+    
+    // Event listeners for pagination dots
+    dots.forEach(dot => {
+      dot.addEventListener('click', function() {
+        const index = parseInt(this.getAttribute('data-index'));
+        goToSlide(index);
+      });
+    });
+    
+    // Event listeners for clicking on carousel items
+    carouselItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        // Don't trigger if clicking on a control button
+        if (e.target.closest('.control-btn')) return;
+        
+        const index = parseInt(this.getAttribute('data-index'));
+        const state = this.getAttribute('data-state');
+        
+        // Only respond to clicks on prev or next items
+        if (state === 'prev' || state === 'next') {
+          goToSlide(index);
+        }
+      });
+    });
+    
+    // Prevent control buttons from triggering slide change
+    document.querySelectorAll('.control-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+    
+    // Navigation functions
+    function goToPrev() {
+      activeIndex = activeIndex === 0 ? carouselItems.length - 1 : activeIndex - 1;
+      updateCarousel();
+    }
+    
+    function goToNext() {
+      activeIndex = activeIndex === carouselItems.length - 1 ? 0 : activeIndex + 1;
+      updateCarousel();
+    }
+    
+    function goToSlide(index) {
+      activeIndex = index;
+      updateCarousel();
+    }
+    
+    // Update carousel state
+    function updateCarousel() {
+      // Update carousel items
+      carouselItems.forEach((item, index) => {
+        // Remove all states
+        item.removeAttribute('data-state');
+        
+        // Set new state
+        if (index === activeIndex) {
+          item.setAttribute('data-state', 'active');
+          setTimeout(() => {
+            item.querySelector('video').play()
+          }, 50)
+        } else if (index === getPrevIndex()) {
+          item.setAttribute('data-state', 'prev');
+          item.querySelector('video').pause()
+        } else if (index === getNextIndex()) {
+          item.setAttribute('data-state', 'next');
+          item.querySelector('video').pause()
+        } else {
+          item.setAttribute('data-state', 'hidden');
+          item.querySelector('video').pause()
+        }
+      });
+      
+      // Update pagination dots
+      dots.forEach((dot, index) => {
+        if (index === activeIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+    
+    // Helper functions
+    function getPrevIndex() {
+      return activeIndex === 0 ? carouselItems.length - 1 : activeIndex - 1;
+    }
+    
+    function getNextIndex() {
+      return activeIndex === carouselItems.length - 1 ? 0 : activeIndex + 1;
+    }
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    let videos = document.querySelectorAll('video')
+      videos.forEach(item=>{
+          let newThumbnail = item.getAttribute('poster'); 
+          if (newThumbnail.includes('_small')){ 
+              newThumbnail = newThumbnail.replace('_small',''); 
+              item.setAttribute('poster', newThumbnail)
+          }
+      })
+  })
+
+  function navigateAway(url) {
+    window.location.href = url
+  }
+</script>
+
+{% schema %}
+{
+"name": "TikTok Video Carousel",
+"tag": "section",
+"class": "tiktok-carousel-section",
+"settings": [
+  {
+    "type": "video",
+    "id": "video-1",
+    "label": "Video 1"
+  },
+  {
+    "type": "video",
+    "id": "video-2",
+    "label": "Video 2"
+  },
+  {
+    "type": "video",
+    "id": "video-3",
+    "label": "Video 3"
+  },
+  {
+    "type": "product",
+    "id": "product-1",
+    "label": "Product #1"
+  },
+  {
+    "type": "product",
+    "id": "product-2",
+    "label": "Product #2"
+  },
+  {
+    "type": "product",
+    "id": "product-3",
+    "label": "Product #3"
+  }
+],
+"presets": [
+  {
+    "name": "TikTok Video Carousel"
+  }
+]
+}
+{% endschema %}
