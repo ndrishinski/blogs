@@ -1,0 +1,630 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .escooter-hero-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Hero Image */
+  .escooter-hero-image-container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .escooter-hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 1s ease;
+  }
+
+  @media (max-width: 768px) {
+    .escooter-hero-image {
+      /* object-fit: none!important; */
+    }
+
+    .escooter-category-container {
+      bottom: 0;
+    }
+  }
+
+  .escooter-overlay {
+    position: absolute;
+    inset: 0;
+    background-color:rgba(0, 0, 0, 0.3);
+    z-index: 2;
+  }
+
+  /* Navigation Arrows */
+  .escooter-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: {{ section.settings.arrow_bg_color }};
+    color: {{ section.settings.arrow_color }};
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .escooter-nav-arrow:hover {
+    background-color: {{ section.settings.arrow_hover_color }};
+  }
+
+  .escooter-nav-prev {
+    left: 16px;
+  }
+
+  .escooter-nav-next {
+    right: 16px;
+  }
+
+  /* Hero Content */
+  .escooter-hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: {{ section.settings.text_color }};
+    padding: 0 16px;
+    z-index: 5;
+  }
+
+  .escooter-hero-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    transition: opacity 0.5s ease;
+    color: {{ section.settings.h1color }}
+  }
+
+  .escooter-hero-content p {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+    transition: opacity 0.5s ease;
+  }
+
+  .escooter-shop-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+
+  .escooter-shop-btn:hover {
+    background-color: {{ section.settings.button_hover_color }};
+  }
+
+  /* Category Thumbnails */
+  .escooter-category-container {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1024px;
+    padding: 0 16px;
+    z-index: 10;
+  }
+
+  .escooter-category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .escooter-category-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .escooter-category-image {
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .escooter-category-item:hover .escooter-category-image {
+    transform: scale(1.1);
+  }
+
+  .escooter-category-overlay {
+    position: absolute;
+    inset: 0;
+    background-color:rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .escooter-category-name {
+    color: {{ section.settings.category_text_color }};
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* Progress bar styling */
+  .escooter-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+  }
+
+  .escooter-progress {
+    height: 100%;
+    background-color: {{ section.settings.progress_bar_color }};
+    width: 0%;
+    transition: width 0.05s linear;
+    display: block!important;
+  }
+
+  /* Image transition */
+  .escooter-hero-image.fade-out {
+    opacity: 0;
+  }
+
+  .escooter-hero-image.fade-in {
+    opacity: 1;
+  }
+
+  /* Media Queries */
+  @media (min-width: 768px) {
+    .escooter-hero-content h1 {
+      font-size: 4.5rem;
+    }
+    
+    .escooter-hero-content p {
+      font-size: 1.5rem;
+    }
+    
+    .escooter-category-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    
+    .escooter-category-image {
+      height: 128px;
+    }
+    
+    .escooter-category-name {
+      font-size: 0.875rem;
+    }
+  }
+</style>
+<div class="escooter-hero-container" data-interval-time="{{ section.settings.interval_time }}">
+  <!-- Hero Image -->
+  <div class="escooter-hero-image-container" id="escooterHeroImageContainer">
+    <!-- Hero images will be inserted here by JavaScript -->
+  </div>
+  <div class="escooter-overlay"></div>
+  
+  <!-- Navigation Arrows -->
+  <button class="escooter-nav-arrow escooter-nav-prev" id="escooterPrevBtn">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  
+  <button class="escooter-nav-arrow escooter-nav-next" id="escooterNextBtn">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+  
+  <!-- Hero Content -->
+  <div class="escooter-hero-content">
+    <h1 id="escooterHeroTitle"></h1>
+    <p id="escooterHeroSubtitle"></p>
+    <a href="{{ section.settings.button_link }}" class="escooter-shop-btn">
+      {{ section.settings.button_text }} <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  
+  <!-- Category Thumbnails -->
+  <div class="escooter-category-container">
+    <div class="escooter-category-grid" id="escooterCategoryGrid">
+      <!-- Categories will be inserted here by JavaScript -->
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sectionId = '{{ section.id }}';
+    const container = document.querySelector(`#shopify-section-${sectionId} .escooter-hero-container`);
+    
+    if (!container) return;
+    
+    // Categories data
+    const categories = [
+      {% for block in section.blocks %}
+        {
+          id: {{ forloop.index0 }},
+          name: {{ block.settings.category_name | json }},
+          image: {{ block.settings.category_image | img_url: 'master' | json }},
+          heroImage: {{ block.settings.hero_image | img_url: 'master' | json }},
+          title: {{ block.settings.title | json }},
+          subtitle: {{ block.settings.subtitle | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    // DOM elements
+    const heroImageContainer = container.querySelector('#escooterHeroImageContainer');
+    const heroTitle = container.querySelector('#escooterHeroTitle');
+    const heroSubtitle = container.querySelector('#escooterHeroSubtitle');
+    const prevBtn = container.querySelector('#escooterPrevBtn');
+    const nextBtn = container.querySelector('#escooterNextBtn');
+    const categoryGrid = container.querySelector('#escooterCategoryGrid');
+
+    // State
+    let activeCategory = 0;
+    let progress = 0;
+    let intervalId = null;
+    let currentHeroImage = null;
+    let nextHeroImage = null;
+    const intervalTime = parseInt(container.dataset.intervalTime) || 5000; // Default to 5 seconds
+    const updateInterval = 50; // Update progress every 50ms
+    const steps = intervalTime / updateInterval;
+
+    // Initialize hero images
+    function initHeroImages() {
+      if (categories.length === 0) return;
+      
+      // Create initial hero image
+      currentHeroImage = document.createElement('img');
+      currentHeroImage.className = 'escooter-hero-image fade-in';
+      currentHeroImage.src = categories[activeCategory].heroImage;
+      currentHeroImage.alt = categories[activeCategory].name;
+      heroImageContainer.appendChild(currentHeroImage);
+      
+      // Create next hero image (hidden initially)
+      nextHeroImage = document.createElement('img');
+      nextHeroImage.className = 'escooter-hero-image fade-out';
+      nextHeroImage.style.opacity = 0;
+      heroImageContainer.appendChild(nextHeroImage);
+    }
+
+    // Initialize categories
+    function initCategories() {
+      if (categories.length === 0) return;
+      
+      categoryGrid.innerHTML = '';
+      
+      categories.forEach((category, index) => {
+        const categoryItem = document.createElement('div');
+        categoryItem.className = `escooter-category-item`;
+        categoryItem.dataset.index = index;
+        
+        categoryItem.innerHTML = `
+          <img src="${category.image}" alt="${category.name}" class="escooter-category-image">
+          <div class="escooter-category-overlay">
+            <span class="escooter-category-name">${category.name}</span>
+          </div>
+          ${index === activeCategory ? '<div class="escooter-progress-bar"><div class="escooter-progress"></div></div>' : ''}
+        `;
+        
+        categoryItem.addEventListener('click', () => {
+          changeCategory(index);
+        });
+        
+        categoryGrid.appendChild(categoryItem);
+      });
+      
+      // Set initial hero content
+      updateHeroContent();
+    }
+
+    // Update hero content based on active category
+    function updateHeroContent() {
+      if (categories.length === 0) return;
+      
+      const category = categories[activeCategory];
+      
+      // Update hero image with crossfade
+      nextHeroImage.src = category.heroImage;
+      nextHeroImage.alt = category.name;
+      
+      // Fade out current image, fade in next image
+      currentHeroImage.style.opacity = 0;
+      nextHeroImage.style.opacity = 1;
+      
+      // Swap references after transition
+      setTimeout(() => {
+        const temp = currentHeroImage;
+        currentHeroImage = nextHeroImage;
+        nextHeroImage = temp;
+      }, 1000);
+      
+      // Update text content with a fade effect
+      heroTitle.style.opacity = 0;
+      heroSubtitle.style.opacity = 0;
+      
+      setTimeout(() => {
+        heroTitle.textContent = category.title;
+        heroSubtitle.textContent = category.subtitle;
+        heroTitle.style.opacity = 1;
+        heroSubtitle.style.opacity = 1;
+      }, 500);
+    }
+
+    // Update category thumbnails
+    function updateCategoryThumbnails() {
+      const categoryItems = container.querySelectorAll('.escooter-category-item');
+      
+      categoryItems.forEach((item, index) => {
+        // Remove progress bar from all items first
+        const existingProgressBar = item.querySelector('.escooter-progress-bar');
+        if (existingProgressBar) {
+          item.removeChild(existingProgressBar);
+        }
+        
+        // Add progress bar only to active category
+        if (index === activeCategory) {
+          const progressBar = document.createElement('div');
+          progressBar.className = 'escooter-progress-bar';
+          progressBar.innerHTML = '<div class="escooter-progress"></div>';
+          item.appendChild(progressBar);
+        }
+      });
+    }
+
+    // Reset timer and progress
+    function resetTimer() {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      progress = 0;
+      startTimer();
+    }
+
+    // Start timer
+    function startTimer() {
+      intervalId = setInterval(() => {
+        progress += (100 / steps);
+        
+        // Update progress bar
+        const progressElement = container.querySelector('.escooter-category-item[data-index="' + activeCategory + '"] .escooter-progress');
+        console.log('should be updating progress bar: ', progress, progressElement)
+        
+        if (progressElement) {
+          progressElement.style.width = `${progress}%`;
+        }
+        
+        // Move to next category when progress reaches 100%
+        if (progress >= 100) {
+          nextCategory();
+        }
+      }, updateInterval);
+    }
+
+    // Change to specific category
+    function changeCategory(index) {
+      activeCategory = index;
+      progress = 0;
+      
+      updateHeroContent();
+      updateCategoryThumbnails();
+      resetTimer();
+    }
+
+    // Navigate to previous category
+    function prevCategory() {
+      const newIndex = activeCategory === 0 ? categories.length - 1 : activeCategory - 1;
+      changeCategory(newIndex);
+    }
+
+    // Navigate to next category
+    function nextCategory() {
+      const newIndex = activeCategory === categories.length - 1 ? 0 : activeCategory + 1;
+      changeCategory(newIndex);
+    }
+
+    // Event listeners
+    prevBtn.addEventListener('click', prevCategory);
+    nextBtn.addEventListener('click', nextCategory);
+
+    // Initialize
+    initHeroImages();
+    initCategories();
+    startTimer();
+  });
+</script>
+{% schema %}
+  {
+    "name": "New Banner",
+    "tag": "section",
+    "class": "escooter-hero-section",
+    "settings": [
+      {
+        "type": "color",
+        "id": "h1color",
+        "label": "Heading Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Button Background Color",
+        "default": "#7de2e2"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button Text Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "button_hover_color",
+        "label": "Button Hover Color",
+        "default": "#6cd0d0"
+      },
+      {
+        "type": "color",
+        "id": "arrow_bg_color",
+        "label": "Arrow Background Color",
+        "default": "rgba(0, 0, 0, 0.5)"
+      },
+      {
+        "type": "color",
+        "id": "arrow_color",
+        "label": "Arrow Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "arrow_hover_color",
+        "label": "Arrow Hover Color",
+        "default": "rgba(0, 0, 0, 0.7)"
+      },
+      {
+        "type": "color",
+        "id": "category_text_color",
+        "label": "Category Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "progress_bar_color",
+        "label": "Progress Bar Color",
+        "default": "#7de2e2"
+      },
+      {
+        "type": "text",
+        "id": "button_text",
+        "label": "Button Text",
+        "default": "Shop Now"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button Link"
+      },
+      {
+        "type": "range",
+        "id": "interval_time",
+        "min": 3000,
+        "max": 9000,
+        "step": 1000,
+        "unit": "ms",
+        "label": "Slide Interval",
+        "default": 5000
+      }
+    ],
+    "blocks": [
+      {
+        "type": "category",
+        "name": "Category",
+        "limit": 4,
+        "settings": [
+          {
+            "type": "text",
+            "id": "category_name",
+            "label": "Category Name",
+            "default": "Category"
+          },
+          {
+            "type": "image_picker",
+            "id": "category_image",
+            "label": "Category Thumbnail"
+          },
+          {
+            "type": "image_picker",
+            "id": "hero_image",
+            "label": "Hero Background Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "DOUBLE THE POWER"
+          },
+          {
+            "type": "textarea",
+            "id": "subtitle",
+            "label": "Subtitle",
+            "default": "OUR DUAL MOTOR ESCOOTERS BRING RIDES TO THE NEXT LEVEL."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "New Banner",
+        "blocks": [
+          {
+            "type": "category",
+            "settings": {
+              "category_name": "SPRING SALE",
+              "title": "DOUBLE THE POWER",
+              "subtitle": "OUR DUAL MOTOR ESCOOTERS BRING RIDES TO THE NEXT LEVEL."
+            }
+          },
+          {
+            "type": "category",
+            "settings": {
+              "category_name": "ELECTRIC BIKES",
+              "title": "ELECTRIC BIKES",
+              "subtitle": "EXPLORE FURTHER WITH OUR PREMIUM ELECTRIC BIKES."
+            }
+          },
+          {
+            "type": "category",
+            "settings": {
+              "category_name": "DUAL MOTOR ESCOOTERS",
+              "title": "DUAL MOTOR ESCOOTERS",
+              "subtitle": "EXPERIENCE UNMATCHED POWER AND CONTROL."
+            }
+          },
+          {
+            "type": "category",
+            "settings": {
+              "category_name": "POWERBOARDS",
+              "title": "POWERBOARDS",
+              "subtitle": "REDEFINE YOUR URBAN COMMUTE WITH CUTTING-EDGE TECHNOLOGY."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
