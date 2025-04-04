@@ -1,0 +1,286 @@
+<style>
+.countdown-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: {{ section.settings.background_color }};
+  width: 100%;
+  height: 160px;
+  padding: 0 5%;
+}
+
+.countdown-text {
+  flex: 1;
+}
+
+.countdown-text p {
+  color: {{ section.settings.subtitle_color }};
+  margin-bottom: 8px;
+}
+
+.countdown-text h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: {{ section.settings.heading_color }};
+}
+
+.shop-now {
+  display: inline-block;
+  color: {{ section.settings.button_text_color }};
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid {{ section.settings.button_text_color }};
+  padding-bottom: 2px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.countdown-timer {
+  display: flex;
+  gap: 20px;
+}
+
+.time-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+}
+
+.time-value {
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1;
+  color: {{ section.settings.timer_color }};
+}
+
+.time-label {
+  font-size: 14px;
+  margin-top: 4px;
+  color: {{ section.settings.label_color }};
+}
+
+@media (max-width: 768px) {
+  .countdown-container {
+    flex-direction: column;
+    height: auto;
+    padding: 20px 5%;
+  }
+  
+  .countdown-text {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .time-value {
+    font-size: 36px;
+  }
+  
+  .time-segment {
+    min-width: 60px;
+  }
+}
+</style>
+
+<div class="countdown-container" 
+     data-end-date="{{ section.settings.end_date }}" 
+     data-days-label="{{ section.settings.days_label }}"
+     data-hours-label="{{ section.settings.hours_label }}"
+     data-minutes-label="{{ section.settings.minutes_label }}"
+     data-seconds-label="{{ section.settings.seconds_label }}">
+  <div class="countdown-text">
+    {% if section.settings.subtitle != blank %}
+      <p>{{ section.settings.subtitle }}</p>
+    {% endif %}
+    
+    {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading }}</h2>
+    {% endif %}
+    
+    {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="shop-now">{{ section.settings.button_text }}</a>
+    {% endif %}
+  </div>
+  
+  <div class="countdown-timer">
+    <div class="time-segment">
+      <span id="days" class="time-value">00</span>
+      <span class="time-label">{{ section.settings.days_label }}</span>
+    </div>
+    
+    <div class="time-segment">
+      <span id="hours" class="time-value">00</span>
+      <span class="time-label">{{ section.settings.hours_label }}</span>
+    </div>
+    
+    <div class="time-segment">
+      <span id="minutes" class="time-value">00</span>
+      <span class="time-label">{{ section.settings.minutes_label }}</span>
+    </div>
+    
+    <div class="time-segment">
+      <span id="seconds" class="time-value">00</span>
+      <span class="time-label">{{ section.settings.seconds_label }}</span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.querySelector('.countdown-container');
+  if (!container) return;
+  
+  const endDateStr = "{{ section.settings.end_time }}"
+  if (!endDateStr) return;
+  
+  const endDate = new Date(endDateStr);
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+  
+  function updateCountdown() {
+    const now = new Date();
+    const diff = endDate - now;
+    
+    if (diff <= 0) {
+      // Sale has ended
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      return;
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    daysEl.textContent = days < 10 ? '0' + days : days;
+    hoursEl.textContent = hours < 10 ? '0' + hours : hours;
+    minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
+    secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+  }
+  
+  // Update countdown every second
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+});
+</script>
+
+{% schema %}
+{
+  "name": "Countdown Timer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Countdown is on"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop the sale before it ends"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Settings"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End date and time",
+      "default": "December 17, 2025 03:24:00",
+      "info": "Format: December 17, 2025 03:24:00"
+    },
+    {
+      "type": "text",
+      "id": "days_label",
+      "label": "Days Label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours Label",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minutes Label",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Seconds Label",
+      "default": "Seconds"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "timer_color",
+      "label": "Timer Numbers Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Timer Labels Color",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Timer"
+    }
+  ]
+}
+{% endschema %}
