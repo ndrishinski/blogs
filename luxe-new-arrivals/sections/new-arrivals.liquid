@@ -1,0 +1,317 @@
+<style>
+  .new-arrivals-section {
+    padding: 2rem 1rem;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .new-arrivals-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    .new-arrivals-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .hero-section {
+    position: relative;
+    height: 700px;
+    overflow: hidden;
+  }
+  
+  .hero-image-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .hero-heading {
+    font-size: 3.75rem;
+    font-weight: 300;
+    color: {{ section.settings.text-color }};
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subheading {
+    color: {{ section.settings.text-color }};
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-button {
+    display: inline-block;
+    border: 1px solid {{ section.settings.text-color }};
+    color: {{ section.settings.text-color }};
+    padding: 0.5rem 1.5rem;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    width: 100px;
+  }
+  
+  .hero-button:hover {
+    background-color: white;
+    color: black;
+  }
+  
+  .products-section {
+    height: 700px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .product-card {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-image-container {
+    position: relative;
+    aspect-ratio: 1/1;
+    /* background-color: #f5f5f3; */
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+  }
+  
+  .product-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+  }
+  
+  .product-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background-color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 1rem;
+    z-index: 1;
+  }
+  
+  .product-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-top: 3px;
+    margin-bottom: 0px;
+  }
+  
+  .product-price {
+    margin-bottom: 0.5rem;
+  }
+  
+  .color-options {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .color-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .product-image {
+      height: 100%;
+    }
+  }
+</style>
+<div class="new-arrivals-section">
+  <div class="container">
+    <div class="new-arrivals-grid">
+      {%- if section.settings.hero_image != blank -%}
+        <div class="hero-section">
+          <div class="hero-image-container">
+            {{ section.settings.hero_image | image_url: width: 1200 | image_tag: 
+              loading: 'eager',
+              class: 'hero-image',
+              alt: section.settings.heading
+            }}
+          </div>
+          <div class="hero-content">
+            <h1 class="hero-heading">{{ section.settings.heading }}</h1>
+            <p class="hero-subheading">{{ section.settings.subheading }}</p>
+            <a href="{{ section.settings.button_link }}" class="hero-button">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="products-section">
+        <div class="products-grid">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'product' and block.settings.product != blank -%}
+              {%- assign product = block.settings.product -%}
+              <div class="product-card" {{ block.shopify_attributes }}>
+                <div class="product-image-container">
+                  {%- if block.settings.badge != blank -%}
+                    <div class="product-badge">{{ block.settings.badge }}</div>
+                  {%- endif -%}
+                  <a href="{{ product.url }}">
+                    {{ product.featured_image | image_url: width: 560 | image_tag: 
+                      loading: 'lazy',
+                      class: 'product-image',
+                      alt: product.title
+                    }}
+                  </a>
+                </div>
+                <h3 class="product-title">{{ product.title }}</h3>
+                <p class="product-price">{{ product.price | money }}</p>
+                
+                {%- if product.variants.size > 1 and product.options_by_name['Color'] -%}
+                  <div class="color-options">
+                    {%- for variant in product.variants -%}
+                      {%- if variant.available and variant.option1 -%}
+                        <button 
+                          class="color-swatch" 
+                          style="background-color: {{ variant.option1 | handle | replace: '-', '' | downcase }};"
+                          title="{{ variant.option1 }}"
+                          data-variant-id="{{ variant.id }}"
+                          data-variant-image="{{ variant.featured_image.src | image_url }}"
+                        ></button>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Optional JavaScript for enhanced functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle color swatch clicks
+  const colorSwatches = document.querySelectorAll('.color-swatch');
+  
+  colorSwatches.forEach(swatch => {
+    swatch.addEventListener('click', function() {
+      const variantId = this.getAttribute('data-variant-id');
+      const productCard = this.closest('.product-card');
+      const productImage = productCard.querySelector('.product-image');
+      const imageSrc = this.getAttribute('data-variant-image')
+      productImage.removeAttribute('srcset');
+      // Update the product image based on variant
+      if (variantId) {
+        productImage.src = `${imageSrc}?${new Date().getTime()}`;
+      }
+    });
+  });
+});
+</script>
+{% schema %}
+{
+  "name": "New Arrivals",
+  "settings": [
+    {
+      "type": "color",
+      "id": "text-color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New arrivals"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover the collection"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Text",
+          "info": "Leave blank to hide badge"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "New Arrivals",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
