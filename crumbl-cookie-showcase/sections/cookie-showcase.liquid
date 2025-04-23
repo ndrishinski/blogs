@@ -1,0 +1,336 @@
+{% style %}
+  .cookie-showcase {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 24px;
+    background-color: white;
+    transition: background-color 0.3s ease-in-out;
+    position: relative;
+    /* Important: Set overflow to visible to allow image to extend beyond */
+    overflow: visible;
+    /* Set max-height for the container */
+    max-height: 400px;
+  }
+  
+  .cookie-showcase:hover {
+    background-color: {{ section.settings.hover_background_color }}!important;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    position: relative;
+    max-height: 400px;
+  }
+  
+  .image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* Allow image to extend beyond container */
+    position: relative;
+    z-index: 2;
+  }
+  
+  .cookie-image {
+    max-width: 100%;
+    height: auto;
+    /* Remove any constraints that might limit the image height */
+    object-fit: contain;
+    transform: translateX(-32px);
+    /* Make sure image can be larger than container */
+    max-height: none;
+  }
+  
+  .content {
+    width: 100%;
+    color: {{ section.settings.text_color }};
+    margin-top: 16px;
+    transition: color 0.3s ease-in-out;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .cookie-showcase:hover .content {
+    color: {{ section.settings.hover_text_color }};
+  }
+  
+  .cookie-showcase:hover .title {
+    color: {{ section.settings.hover_text_color }};
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    white-space: pre-line;
+  }
+  
+  .description {
+    font-size: 1rem;
+    opacity: 0.9;
+    max-width: 450px;
+    margin-bottom: 24px;
+  }
+  
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 32px;
+    border-radius: 9999px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn-outline {
+    border: 2px solid {{ section.settings.text_color }};
+    color: {{ section.settings.text_color }};
+  }
+  
+  .cookie-showcase:hover .btn-outline {
+    border-color: {{ section.settings.hover_text_color | color_modify: 'alpha', 0.7 }};
+    color: {{ section.settings.hover_text_color }};
+  }
+  
+  .btn-outline:hover {
+    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.1 }};
+  }
+  
+  .cookie-showcase:hover .btn-outline:hover {
+    background-color: {{ section.settings.hover_text_color | color_modify: 'alpha', 0.1 }};
+  }
+  
+  .btn-filled {
+    background-color: {{ section.settings.text_color }};
+    color: {{ section.settings.background_color }};
+  }
+  
+  .cookie-showcase:hover .btn-filled {
+    background-color: {{ section.settings.hover_text_color }};
+    color: {{ section.settings.hover_background_color }};
+  }
+  
+  .btn-filled:hover {
+    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.9 }};
+  }
+  
+  .cookie-showcase:hover .btn-filled:hover {
+    background-color: {{ section.settings.hover_text_color | color_modify: 'alpha', 0.9 }};
+  }
+  
+  @media screen and (min-width: 768px) {
+    .container {
+      flex-direction: row;
+      align-items: center;
+      padding: 48px;
+    }
+    
+    .image-container {
+      width: 50%;
+      justify-content: flex-start;
+    }
+    
+    .cookie-image {
+      transform: translateX(-64px);
+      /* Allow image to be larger than container */
+      max-height: 500px; /* Larger than the container to extend beyond */
+    }
+    
+    .content {
+      width: 50%;
+      margin-top: 0;
+    }
+    
+    .title {
+      font-size: 3.5rem;
+    }
+    
+    .description {
+      font-size: 1.125rem;
+    }
+    
+    /* Flipped layout styles */
+    .flipped .container {
+      flex-direction: row-reverse;
+    }
+    
+    .flipped .image-container {
+      justify-content: flex-end;
+    }
+    
+    .flipped .cookie-image {
+      transform: translateX(64px);
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .showcase-section {
+      margin-bottom: 250px!important;
+    }
+  }
+  
+  .showcase-section {
+    margin: 30px;
+  }
+  {% endstyle %}
+  <div class="cookie-showcase {% if section.settings.flip_layout %}flipped{% endif %}" style="background-color: {{ section.settings.background_color }};">
+    <div class="container">
+      <div class="image-container">
+        {% if section.settings.cookie_image != blank %}
+          <img 
+            src="{{ section.settings.cookie_image | img_url: 'master' }}" 
+            alt="{{ section.settings.title | escape }}" 
+            class="cookie-image"
+            loading="lazy"
+            width="{{ section.settings.cookie_image.width }}"
+            height="{{ section.settings.cookie_image.height }}"
+          >
+        {% else %}
+          {{ 'image' | placeholder_svg_tag: 'cookie-image placeholder' }}
+        {% endif %}
+      </div>
+      <div class="content">
+        {% if section.settings.title != blank %}
+          <h2 class="title">{{ section.settings.title }}</h2>
+        {% endif %}
+        
+        {% if section.settings.description != blank %}
+          <div class="description">{{ section.settings.description }}</div>
+        {% endif %}
+        
+        <div class="buttons">
+          {% if section.settings.button_1_text != blank %}
+            <a href="{{ section.settings.button_1_link }}" class="btn btn-outline">
+              {{ section.settings.button_1_text }}
+            </a>
+          {% endif %}
+          
+          {% if section.settings.button_2_text != blank %}
+            <a href="{{ section.settings.button_2_link }}" class="btn btn-filled">
+              {{ section.settings.button_2_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% schema %}
+  {
+    "name": "Cookie Showcase",
+    "class": "showcase-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "flip_layout",
+        "label": "Flip layout (Image on right)",
+        "default": false,
+        "info": "When checked, the image will appear on the right side"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "image_picker",
+        "id": "cookie_image",
+        "label": "Cookie Image"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Semi-Sweet\nChocolate Chunk\nCookie"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description",
+        "default": "<p>Chocolate chip, but make it chunky—a delicious cookie filled with irresistible semi-sweet chocolate chunks and a sprinkle of flaky sea salt.</p>"
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "text",
+        "id": "button_1_text",
+        "label": "First Button Text",
+        "default": "Learn More"
+      },
+      {
+        "type": "url",
+        "id": "button_1_link",
+        "label": "First Button Link"
+      },
+      {
+        "type": "text",
+        "id": "button_2_text",
+        "label": "Second Button Text",
+        "default": "Order Now"
+      },
+      {
+        "type": "url",
+        "id": "button_2_link",
+        "label": "Second Button Link"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "hover_background_color",
+        "label": "Hover Background Color",
+        "default": "#5d4037"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#5d4037"
+      },
+      {
+        "type": "color",
+        "id": "hover_text_color",
+        "label": "Hover Text Color",
+        "default": "#FFFFFF"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Cookie Showcase",
+        "category": "Product",
+        "settings": {
+          "flip_layout": false,
+          "title": "Semi-Sweet\nChocolate Chunk\nCookie",
+          "description": "<p>Chocolate chip, but make it chunky—a delicious cookie filled with irresistible semi-sweet chocolate chunks and a sprinkle of flaky sea salt.</p>",
+          "button_1_text": "Learn More",
+          "button_2_text": "Order Now",
+          "background_color": "#FFFFFF",
+          "hover_background_color": "#5d4037",
+          "text_color": "#5d4037",
+          "hover_text_color": "#FFFFFF"
+        }
+      }
+    ]
+  }
+  {% endschema %}
