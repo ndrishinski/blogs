@@ -1,0 +1,644 @@
+<div class="product-carousel-section" data-section-id="{{ section.id }}" data-section-type="product-carousel">
+  <div class="container">
+    <div class="carousel-header">
+      <h2 class="carousel-title">{{ section.settings.title }}</h2>
+      <div class="header-actions">
+        {% if section.settings.view_all_link != blank and section.settings.view_all_text != blank %}
+          <a href="{{ section.settings.view_all_link }}" class="view-all">{{ section.settings.view_all_text }}</a>
+        {% endif %}
+        <div class="nav-buttons">
+          <button class="nav-button prev-button" aria-label="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <button class="nav-button next-button" aria-label="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {% assign collection = collections[section.settings.collection] %}
+    
+    {% if collection != blank and collection.products.size > 0 %}
+      <div class="carousel" id="product-carousel-{{ section.id }}">
+        <div class="carousel-inner">
+          {% for product in collection.products limit: section.settings.products_to_show %}
+            <div class="product-card">
+              <div class="product-image-container">
+                <a href="{{ product.url | within: collection }}" class="product-link">
+                  {% if product.featured_image != blank %}
+                    <img 
+                      src="{{ product.featured_image | img_url: '400x400', crop: 'center' }}" 
+                      alt="{{ product.featured_image.alt | escape }}"
+                      class="product-image"
+                      loading="lazy"
+                      width="400"
+                      height="400">
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'product-image placeholder' }}
+                  {% endif %}
+                </a>
+                
+                {% if product.compare_at_price > product.price %}
+                  <div class="product-badge sale">{{ section.settings.sale_badge_text }}</div>
+                {% elsif product.tags contains 'new' %}
+                  <div class="product-badge">{{ section.settings.new_badge_text }}</div>
+                {% endif %}
+                
+                <!-- Variant options on hover -->
+                <div class="variant-options">
+                  {% unless product.has_only_default_variant %}
+                    {% for option in product.options_with_values %}
+                      <div class="variant-option-group">
+                        <h4 class="variant-option-title">{{ option.name }}</h4>
+                        <div class="variant-option-values">
+                          {% for value in option.values %}
+                            {% assign option_downcase = option.name | downcase %}
+                            
+                            {% if option_downcase contains 'color' or option_downcase contains 'colour' %}
+                              <div class="variant-color-swatch" 
+                                data-value="{{ value | escape }}"
+                                style="background-color: {{ value | downcase | replace: ' ', '' }};">
+                                <span class="sr-only">{{ value }}</span>
+                              </div>
+                            {% else %}
+                              <div class="variant-value" data-value="{{ value | escape }}">
+                                {{ value }}
+                              </div>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% endunless %}
+                  
+                  <a href="{{ product.url | within: collection }}" class="view-product-button">
+                    {{ section.settings.view_product_text }}
+                  </a>
+                </div>
+              </div>
+              
+              <div class="product-info">
+                {% if section.settings.show_vendor %}
+                  <p class="product-vendor">{{ product.vendor }}</p>
+                {% endif %}
+                
+                {% if product.metafields.reviews.rating %}
+                  <div class="product-rating">
+                    <span class="rating-star">★</span>
+                    <span class="rating-value">{{ product.metafields.reviews.rating.value }}</span>
+                  </div>
+                {% endif %}
+                
+                <h3 class="product-name">
+                  <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+                </h3>
+                
+                <div class="product-price">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="current-price sale-price">{{ product.price | money }}</span>
+                    <span class="original-price">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="current-price">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="empty-collection">
+        <p>{{ section.settings.empty_collection_text }}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .product-carousel-section {
+    padding: 2rem 0;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Header styles */
+  .carousel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .carousel-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .view-all {
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: underline;
+    color: #000;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .nav-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  
+  .nav-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Carousel styles */
+  .carousel {
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+  }
+  
+  .carousel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  .carousel.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+  }
+  
+  .carousel-inner {
+    display: flex;
+  }
+  
+  /* Product card styles */
+  .product-card {
+    min-width: 25%;
+    flex-shrink: 0;
+    padding: 0 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .product-card {
+      min-width: 50%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .product-card {
+      min-width: 80%;
+    }
+  }
+  
+  .product-image-container {
+    position: relative;
+    background-color: #f3f4f6;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+  
+  .product-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card:hover .product-image {
+    transform: scale(1.05);
+  }
+  
+  .favorite-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    z-index: 2;
+  }
+  
+  .favorite-button:hover {
+    background-color: #fff;
+  }
+  
+  .product-badge {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    background-color: #fff;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    z-index: 2;
+  }
+  
+  .product-badge.sale {
+    background-color: #ef4444;
+    color: #fff;
+  }
+  
+  /* Variant options on hover */
+  .variant-options {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 3;
+  }
+  
+  .product-card:hover .variant-options {
+    transform: translateY(0);
+  }
+  
+  .variant-option-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  .variant-option-title {
+    font-size: 1.45rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  .variant-option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .variant-color-swatch {
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+  }
+  
+  .variant-color-swatch:hover {
+    transform: scale(1.1);
+  }
+  
+  .variant-value {
+    padding: 0.45rem 0.7rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  
+  .variant-value:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .view-product-button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .view-product-button:hover {
+    background-color: #333;
+  }
+  
+  /* Product info styles */
+  .product-info {
+    margin-top: 0.75rem;
+  }
+  
+  .product-vendor {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+  
+  .product-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+  
+  .rating-star {
+    margin-right: 0.25rem;
+    font-size: 0.875rem;
+    color: #f59e0b;
+  }
+  
+  .rating-value {
+    font-size: 0.875rem;
+  }
+  
+  .product-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  
+  .product-name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .product-name a:hover {
+    text-decoration: underline;
+  }
+  
+  .product-price {
+    display: flex;
+    align-items: center;
+  }
+  
+  .current-price {
+    font-weight: 500;
+  }
+  
+  .sale-price {
+    color: #ef4444;
+  }
+  
+  .original-price {
+    margin-left: 0.5rem;
+    color: #6b7280;
+    text-decoration: line-through;
+    font-size: 0.875rem;
+  }
+  
+  .empty-collection {
+    padding: 2rem;
+    text-align: center;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+  }
+  
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carouselSections = document.querySelectorAll('[data-section-type="product-carousel"]');
+    
+    carouselSections.forEach(section => {
+      const sectionId = section.getAttribute('data-section-id');
+      const carousel = document.getElementById(`product-carousel-${sectionId}`);
+      const prevButton = section.querySelector('.prev-button');
+      const nextButton = section.querySelector('.next-button');
+      
+      if (!carousel) return;
+      
+      let isDragging = false;
+      let startX;
+      let scrollLeft;
+
+      // Button navigation
+      prevButton.addEventListener('click', function() {
+        const itemWidth = carousel.offsetWidth / 4;
+        carousel.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+      });
+
+      nextButton.addEventListener('click', function() {
+        const itemWidth = carousel.offsetWidth / 4;
+        carousel.scrollBy({ left: itemWidth, behavior: 'smooth' });
+      });
+
+      // Mouse drag scrolling
+      carousel.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        carousel.classList.add('dragging');
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+      });
+
+      carousel.addEventListener('mouseleave', function() {
+        isDragging = false;
+        carousel.classList.remove('dragging');
+      });
+
+      carousel.addEventListener('mouseup', function() {
+        isDragging = false;
+        carousel.classList.remove('dragging');
+      });
+
+      carousel.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        carousel.scrollLeft = scrollLeft - walk;
+      });
+
+      // Touch support
+      carousel.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        startX = e.touches[0].pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+      });
+
+      carousel.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        const x = e.touches[0].pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 2;
+        carousel.scrollLeft = scrollLeft - walk;
+      });
+
+      carousel.addEventListener('touchend', function() {
+        isDragging = false;
+      });
+
+      // Prevent click events during drag
+      const productLinks = section.querySelectorAll('.product-link');
+      productLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (carousel.classList.contains('dragging')) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+      });
+
+      // Wishlist functionality
+      const wishlistButtons = section.querySelectorAll('.js-wishlist-button');
+      wishlistButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const productId = this.getAttribute('data-product-id');
+          // Add your wishlist functionality here
+          console.log('Add to wishlist:', productId);
+          
+          // Toggle active state
+          this.classList.toggle('active');
+        });
+      });
+      
+      // Variant selection
+      const variantValues = section.querySelectorAll('.variant-value, .variant-color-swatch');
+      variantValues.forEach(value => {
+        value.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Remove active class from siblings
+          const siblings = this.parentElement.querySelectorAll('.variant-value, .variant-color-swatch');
+          siblings.forEach(sibling => sibling.classList.remove('active'));
+          
+          // Add active class to selected value
+          this.classList.add('active');
+          
+          // You can add additional logic here to update the product image or selected variant
+        });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Gymshark Carousel",
+  "tag": "section",
+  "class": "product-carousel-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Outperform this season"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "label": "Products to show",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all text",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "text",
+      "id": "new_badge_text",
+      "label": "New badge text",
+      "default": "NEW"
+    },
+    {
+      "type": "text",
+      "id": "sale_badge_text",
+      "label": "Sale badge text",
+      "default": "SALE"
+    },
+    {
+      "type": "text",
+      "id": "view_product_text",
+      "label": "View product button text",
+      "default": "View Product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "empty_collection_text",
+      "label": "Empty collection text",
+      "default": "No products found in this collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gymshark Carousel",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}
