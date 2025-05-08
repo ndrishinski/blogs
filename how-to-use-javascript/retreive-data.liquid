@@ -1,0 +1,91 @@
+<script>
+  // https://shopify.dev/docs/api/ajax/reference/product
+  document.addEventListener('DOMContentLoaded', async function() {
+    // fetch product data and add tags to product page
+    async function fetchProductByVariantId() {
+    // You need the product handle, which you might store in a data attribute
+      const productHandle = 'plain-t';
+
+      const response = await fetch(`/products/${productHandle}.js`);
+      const product = await response.json();
+      return product;
+    }
+
+    let product = await fetchProductByVariantId()
+    let str = ''
+    console.log('Prod: ', product)
+    product.tags.forEach(tag => str += `- ${tag}`);
+    document.querySelector('.product__media-wrapper').insertAdjacentHTML('beforeend', `<p>${str}</p>`);
+  })
+
+
+  //   // https://openfoodfacts.github.io/openfoodfacts-server/api/
+  /// random food API
+  // fetch('https://world.openfoodfacts.net/api/v2/product/3274080005003.json', {
+  //   method: 'GET',
+  //   headers: { Authorization: 'Basic ' + btoa('off:off') },
+  // })
+  // .then(response => response.json())
+  // .then(json => console.log('food: ', json.product));
+
+
+  // REFRESH CART
+  fetch(`${routes.cart_url}?section_id=main-cart-items`)
+    .then((response) => response.text())
+    .then((responseText) => {
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const selectors = ['cart-items'];
+        for (const selector of selectors) {
+            const targetElement = document.querySelector(selector);
+            const sourceElement = html.querySelector(selector);
+            if (targetElement && sourceElement) {
+                targetElement.replaceWith(sourceElement);
+            }
+        }
+    })
+
+  // Rotate cart Image
+  document.querySelector('.cart-item__image').style.transform = 'rotate(0.5turn)'
+
+  // Add to Cart
+
+  let formData = {
+    'items': [{
+      'id': 46243253879009,
+      'quantity': 2
+    }]
+  };
+
+  fetch(window.Shopify.routes.root + 'cart/add.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => {
+    return response.json();
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+
+  // Update Cart Quantity
+  let updates = {
+    46243253879009: 9,
+  };
+
+  fetch(window.Shopify.routes.root + 'cart/update.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ updates })
+  })
+  .then(response => {
+    return response.json();
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+</script>
