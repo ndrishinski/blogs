@@ -1,0 +1,298 @@
+<style>
+.shop-card-section {
+  position: static;
+  height: 600px;
+  font-family: 'Open Sans Condensed'
+  , sans-serif;
+  background: linear-gradient(15deg, {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }} 50%, {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[1] }} 50.1%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  height: 360px;
+  width: 350px;
+  background: #f5f5f5;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border-radius: 5px;
+  padding: 25px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+
+  margin: auto;
+  top: -480px;
+}
+
+.shop-card figure img {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  margin: 0;
+}
+
+.shop-card .title {
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 20px;
+  color: #23211f;
+  margin-top: -20px;
+
+}
+
+.shop-card .desc {
+  font-size: 17px;
+  opacity: 0.8;
+  margin-bottom: 3px;
+}
+
+.shop-card .cta {
+  padding: 20px 20px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shop-card .price {
+  color: {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }};
+  font-size: 22px;
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.shop-card .btn {
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }};
+  padding: 8px 14px;
+  border: 1px solid {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }};
+  border-radius: 20px;
+  position: relative;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.shop-card .btn:hover {
+  color: #fff;
+  border-color: transparent;
+}
+
+.shop-card .btn .bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(135deg, {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[1] }}, {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }});
+  z-index: -1;
+  transition: all 0.3s ease-in-out;
+}
+
+.shop-card .btn:hover .bg {
+  opacity: 1;
+}
+
+.slider {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  margin-top: -41px;
+}
+
+.slick-slider {
+  margin-bottom: 15px;
+}
+
+.slick-dots a {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+.slick-dots span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 25%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.slick-dots circle {
+  fill: none;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 39 39;
+  stroke-dashoffset: 39;
+  transition: all 0.9s ease-in-out;
+  transition: stroke-dashoffset 0.5s;
+}
+.slick-dots .slick-active circle {
+  stroke-dashoffset: 0;
+}
+
+@media (max-width: 768px) {
+  .shop-card {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .slick-dots span {
+    top: 4
+  }
+}
+
+.bg {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(15deg, #{{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[0] }} 50%, {{ section.settings.section-selected-product.variants[0].metafields.custom.variant_colors.value[1] }} 50.1%);
+  z-index: 1;
+  display: none;
+  height: 600px;
+  top: -660px;
+
+}
+
+.custom-card-section {
+  max-height: 600px;
+}
+</style>
+
+<div class="shop-card-section">
+  &nbsp;
+</div>
+<div class="shop-card">
+  <div class="title">{{ section.settings.product-title }}</div>
+  <div class="slider">
+    {% for variant in section.settings.section-selected-product.variants %}
+      {% assign colors = variant.metafields.custom.variant_colors.value %}
+
+      <figure data-color="{{ colors[0] }}, {{ colors[1] }}" data-variantId="{{ variant.id }}">
+        <img src="{{ variant.image | image_url }}">
+      </figure>
+    {% endfor %}
+  </div>
+  <div class="cta">
+    <div class="price">{{ section.settings.section-selected-product.price | money }}</div>
+    <button class="btn btn-submission">Add to cart<span class="bg"></span>
+    </button>
+  </div>
+</div>
+<div class="bg">&nbsp;</div>
+
+{% javascript %}
+  let variantId
+
+  function background(c1, c2) {
+    return {
+      background: "-moz-linear-gradient(15deg, " + c1 + " 50%, " + c2 + " 50.1%)",
+      background: "-o-linear-gradient(15deg, " + c1 + ", " + c2 + " 50.1%)",
+      background: "-webkit-linear-gradient(15deg, " + c1 + " 50%, " + c2 + ")",
+      background: "-ms-linear-gradient(15deg, " + c1 + " 50%, " + c2 + " 50.1%)",
+      background: "linear-gradient(15deg, " + c1 + " 50%," + c2 + " 50.1%)"
+    };
+  }
+
+  function changeBg(c1, c2) {
+    $("div.bg")
+      .css(background(c1, c2))
+      .fadeIn(700, function() {
+        $(".shop-card-section").css(background(c1, c2));
+        $(".bg").hide();
+    });
+    $("span.bg").css({
+      background: "-moz-linear-gradient(135deg, " + c1 + ", " + c2 + ")",
+      background: "-o-linear-gradient(135deg, " + c1 + ", " + c2 + ")",
+      background: "-webkit-linear-gradient(135deg, " + c1 + ", " + c2 + ")",
+      background: "-ms-linear-gradient(135deg, " + c1 + ", " + c2 + ")",
+      background: "linear-gradient(135deg, " + c1 + "," + c2 + ")"
+    });
+  }
+
+  const $slider = document.querySelector('.slider');
+
+  $(document).ready(function() {
+    $('.slider').slick({
+      arrows: false,
+      dots: true,
+      infinite: true,
+      speed: 600,
+      fade: true,
+      focusOnSelect: true,
+      customPaging: function(slider, i) {
+        var color = $(slider.$slides[i]).data('color').split(',')[1];
+        return('<a><svg width="100%" height="100%" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.215" stroke="' + color + '"></circle></svg><span style="background:' + color + '"></span></a>');
+      }
+    }).on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+      variantId = $('.slider figure').eq(nextSlide).data('variantid')
+      const colors = $('.slider figure').eq(nextSlide).data('color').split(',');
+      const color1 = colors[0];
+      const color2 = colors[1];
+      $(".price, .btn").css({
+            color: color1,
+          });
+          $(".btn").css({
+            borderColor: color2,
+          });
+      changeBg(color1, color2);
+    });
+
+
+    document.querySelector('.btn-submission').addEventListener('click', function() {
+      let formData = {
+        'items': [
+          {
+            'id': variantId,
+            'quantity': 1
+          }
+        ]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        window.location.href = '/cart'
+        return response.json();
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+    });
+
+    variantId = $('.slick-slide')[0].dataset.variantid
+  });
+{% endjavascript %}
+
+{% schema %}
+  {
+    "name": "Shop Card Slider",
+    "class": "custom-card-section",
+    "settings": [
+      {
+        "type": "product",
+        "id": "section-selected-product",
+        "label": "Selected Product"
+      }, {
+        "type": "text",
+        "id": "product-title",
+        "label": "Product Title (Limit 24 characters)"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Shop Card Slider"
+      }
+    ]
+  }
+{% endschema %}
