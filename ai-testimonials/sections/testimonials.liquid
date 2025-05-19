@@ -1,0 +1,706 @@
+<div class="testimonial-section" 
+     style="background: linear-gradient(to bottom, {{ section.settings.gradient_start_color }}, {{ section.settings.gradient_end_color }});">
+  <div class="container">
+    <div class="section-header">
+      {% if section.settings.title != blank %}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="section-description">{{ section.settings.description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="testimonial-container">
+      {% if section.settings.show_quote_marks %}
+        <div class="quote-mark left">"</div>
+        <div class="quote-mark right">"</div>
+      {% endif %}
+
+      <div class="carousel">
+        <div class="carousel-inner" id="testimonialCarousel-{{ section.id }}">
+          {% for block in section.blocks %}
+            {% if block.type == 'testimonial' %}
+              <div class="testimonial-card" {{ block.shopify_attributes }}>
+                <div class="card-content" style="background-color: {{ section.settings.card_background_color }};">
+                  <div class="testimonial-content">
+                    <div class="avatar-container">
+                      {% if block.settings.image != blank %}
+                        <img class="avatar" src="{{ block.settings.image | img_url: '200x200', crop: 'center' }}" alt="{{ block.settings.name }}">
+                      {% else %}
+                        <div class="avatar placeholder-avatar" style="background-color: {{ section.settings.accent_color }};">
+                          {{ block.settings.name | slice: 0, 1 | upcase }}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="testimonial-body">
+                      <div class="rating">
+                        {% assign rating = block.settings.rating | default: 5 %}
+                        {% for i in (1..5) %}
+                          <div class="star {% if i <= rating %}filled{% else %}empty{% endif %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <blockquote class="quote" style="color: {{ section.settings.text_color }};">
+                        "{{ block.settings.quote }}"
+                      </blockquote>
+                      <h4 class="author-name" style="color: {{ section.settings.heading_color }};">{{ block.settings.name }}</h4>
+                      <p class="author-info" style="color: {{ section.settings.subtext_color }};">
+                        {{ block.settings.role }}{% if block.settings.company != blank %}, {{ block.settings.company }}{% endif %}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if section.blocks.size > 1 and section.settings.show_navigation %}
+        <div class="carousel-controls">
+          <button class="carousel-button" id="prevButton-{{ section.id }}" aria-label="Previous testimonial">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <div class="carousel-dots" id="carouselDots-{{ section.id }}">
+            {% for block in section.blocks %}
+              {% if block.type == 'testimonial' %}
+                <div class="dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <button class="carousel-button" id="nextButton-{{ section.id }}" aria-label="Next testimonial">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Reset and base styles */
+  .testimonial-section * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .testimonial-section {
+    padding: 4rem 1rem;
+  }
+
+  .testimonial-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .testimonial-section .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .testimonial-section .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .section-title {
+      font-size: 2.5rem;
+    }
+  }
+
+  .testimonial-section .section-description {
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+
+  /* Testimonial carousel */
+  .testimonial-section .testimonial-container {
+    position: relative;
+    padding: 0 1rem;
+  }
+
+  .testimonial-section .quote-mark {
+    display: none;
+    position: absolute;
+    opacity: 0.3;
+    font-size: 5rem;
+    z-index: 0;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .quote-mark {
+      display: block;
+    }
+
+    .testimonial-section .quote-mark.left {
+      left: -1rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .testimonial-section .quote-mark.right {
+      right: -1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .testimonial-section .carousel {
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
+  .testimonial-section .carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .testimonial-section .testimonial-card {
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  .testimonial-section .card-content {
+    padding: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .card-content {
+      padding: 2.5rem;
+    }
+  }
+
+  .testimonial-section .testimonial-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .testimonial-content {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2.5rem;
+    }
+  }
+
+  .testimonial-section .avatar-container {
+    flex-shrink: 0;
+  }
+
+  .testimonial-section .avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+  }
+
+  .testimonial-section .placeholder-avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .avatar,
+    .testimonial-section .placeholder-avatar {
+      width: 6rem;
+      height: 6rem;
+    }
+  }
+
+  .testimonial-section .testimonial-body {
+    flex: 1;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .testimonial-body {
+      text-align: left;
+    }
+  }
+
+  .testimonial-section .rating {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .rating {
+      justify-content: flex-start;
+    }
+  }
+
+  .testimonial-section .star {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.25rem;
+  }
+
+  .testimonial-section .star.filled {
+    color: {{ section.settings.star_color }};
+    fill: {{ section.settings.star_color }};
+  }
+
+  .testimonial-section .star.empty {
+    color: #e2e8f0;
+    fill: #e2e8f0;
+  }
+
+  .testimonial-section .quote {
+    font-style: italic;
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-section .quote {
+      font-size: 1.25rem;
+    }
+  }
+
+  .testimonial-section .author-name {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Navigation controls */
+  .testimonial-section .carousel-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+  }
+
+  .testimonial-section .carousel-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .testimonial-section .carousel-button:hover {
+    background-color: #f8fafc;
+  }
+
+  .testimonial-section .carousel-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .testimonial-section .carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 1rem;
+  }
+
+  .testimonial-section .dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background-color: #cbd5e1;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .testimonial-section .dot.active {
+    background-color: {{ section.settings.dot_active_color }};
+  }
+</style>
+
+{% if section.blocks.size > 1 and section.settings.show_navigation %}
+<script>
+  (function() {
+    // DOM elements
+    const sectionId = "{{ section.id }}";
+    const carouselElement = document.getElementById('testimonialCarousel-' + sectionId);
+    const dotsContainer = document.getElementById('carouselDots-' + sectionId);
+    const prevButton = document.getElementById('prevButton-' + sectionId);
+    const nextButton = document.getElementById('nextButton-' + sectionId);
+    const dots = dotsContainer.querySelectorAll('.dot');
+
+    // State
+    let activeIndex = 0;
+    let isAnimating = false;
+    const totalSlides = {{ section.blocks.size }};
+    {% if section.settings.autoplay %}
+      let autoplayInterval;
+    {% endif %}
+
+    // Go to a specific slide
+    function goToSlide(index) {
+      if (isAnimating) return;
+      isAnimating = true;
+      activeIndex = index;
+      updateCarousel();
+      setTimeout(() => {
+        isAnimating = false;
+      }, 500);
+    }
+
+    // Go to the previous slide
+    function previousSlide() {
+      activeIndex = activeIndex === 0 ? totalSlides - 1 : activeIndex - 1;
+      goToSlide(activeIndex);
+    }
+
+    // Go to the next slide
+    function nextSlide() {
+      activeIndex = activeIndex === totalSlides - 1 ? 0 : activeIndex + 1;
+      goToSlide(activeIndex);
+    }
+
+    // Update the carousel position and active dot
+    function updateCarousel() {
+      carouselElement.style.transform = `translateX(-${activeIndex * 100}%)`;
+      
+      // Update dots
+      dots.forEach((dot, index) => {
+        if (index === activeIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    // Add event listeners
+    prevButton.addEventListener('click', previousSlide);
+    nextButton.addEventListener('click', nextSlide);
+
+    // Add click events to dots
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToSlide(index));
+    });
+
+    {% if section.settings.autoplay %}
+      // Setup autoplay
+      function startAutoplay() {
+        autoplayInterval = setInterval(() => {
+          nextSlide();
+        }, {{ section.settings.autoplay_speed | times: 1000 }});
+      }
+
+      function stopAutoplay() {
+        clearInterval(autoplayInterval);
+      }
+
+      // Start autoplay
+      startAutoplay();
+
+      // Pause autoplay on hover
+      carouselElement.addEventListener('mouseenter', stopAutoplay);
+      carouselElement.addEventListener('mouseleave', startAutoplay);
+      
+      // Pause autoplay when user interacts with controls
+      prevButton.addEventListener('click', () => {
+        stopAutoplay();
+        if ({{ section.settings.restart_autoplay }}) {
+          setTimeout(startAutoplay, 2000);
+        }
+      });
+      
+      nextButton.addEventListener('click', () => {
+        stopAutoplay();
+        if ({{ section.settings.restart_autoplay }}) {
+          setTimeout(startAutoplay, 2000);
+        }
+      });
+      
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          stopAutoplay();
+          if ({{ section.settings.restart_autoplay }}) {
+            setTimeout(startAutoplay, 2000);
+          }
+        });
+      });
+    {% endif %}
+
+    // Handle touch events for mobile swipe
+    {% if section.settings.enable_swipe %}
+      let touchStartX = 0;
+      let touchEndX = 0;
+      
+      carouselElement.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      
+      carouselElement.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+      
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        if (touchEndX < touchStartX - swipeThreshold) {
+          // Swipe left, go to next
+          nextSlide();
+          {% if section.settings.autoplay and section.settings.restart_autoplay %}
+            stopAutoplay();
+            setTimeout(startAutoplay, 2000);
+          {% endif %}
+        }
+        
+        if (touchEndX > touchStartX + swipeThreshold) {
+          // Swipe right, go to previous
+          previousSlide();
+          {% if section.settings.autoplay and section.settings.restart_autoplay %}
+            stopAutoplay();
+            setTimeout(startAutoplay, 2000);
+          {% endif %}
+        }
+      }
+    {% endif %}
+  })();
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "testimonial-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Don't just take our word for it. Here's what our satisfied customers have to share about their shopping experience."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "gradient_start_color",
+      "label": "Background Gradient Start",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end_color",
+      "label": "Background Gradient End",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#1e293b"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#334155"
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext Color",
+      "default": "#64748b"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star Rating Color",
+      "default": "#fbbf24"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#3b82f6"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active Dot Color",
+      "default": "#1e293b"
+    },
+    {
+      "type": "header",
+      "content": "Display Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quote_marks",
+      "label": "Show Quote Marks",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show Navigation Controls",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_swipe",
+      "label": "Enable Swipe on Mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Autoplay Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable Autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Change Slides Every",
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "restart_autoplay",
+      "label": "Restart Autoplay After Interaction",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Customer Image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer Name",
+          "default": "Customer Name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Customer Role/Title",
+          "default": "Happy Customer"
+        },
+        {
+          "type": "text",
+          "id": "company",
+          "label": "Company Name (Optional)"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Rating",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Testimonial",
+          "default": "Share a testimonial from a happy customer to build trust in your brand and products."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Sarah Johnson",
+            "role": "Fashion Enthusiast",
+            "company": "StyleCo",
+            "rating": 5,
+            "quote": "I've been shopping here for years and the quality never disappoints. Their customer service is exceptional and the shipping is always fast. Absolutely love everything I've purchased!"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Michael Chen",
+            "role": "Tech Professional",
+            "company": "InnovateTech",
+            "rating": 4,
+            "quote": "The product selection is impressive and the website makes it so easy to find exactly what I'm looking for. I appreciate the detailed descriptions and high-quality images that help me make informed decisions."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Emma Rodriguez",
+            "role": "Interior Designer",
+            "company": "Modern Spaces",
+            "rating": 5,
+            "quote": "As a designer, I have high standards for quality and aesthetics. This store consistently exceeds my expectations with their curated collection and attention to detail. My clients are always impressed!"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
