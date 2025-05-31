@@ -1,0 +1,469 @@
+{% stylesheet %}
+  .size-chart-section {
+    padding: 40px 0;
+  }
+
+  .size-chart-container {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .size-chart-title {
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #111827;
+    font-family: var(--font-heading-family, inherit);
+  }
+
+  .size-chart-unit-toggle {
+    display: flex;
+    background-color: #f3f4f6;
+    border-radius: 50px;
+    padding: 4px;
+    margin-bottom: 24px;
+    /* max-width: 400px; */
+  }
+
+  .size-chart-unit-button {
+    flex: 1;
+    text-align: center;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    color: #6b7280;
+    font-family: inherit;
+  }
+
+  .size-chart-unit-button.active {
+    background-color: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    color: #111827;
+  }
+
+  .size-chart-table-container {
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+  }
+
+  .size-chart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .size-chart-table th {
+    padding: 16px 24px;
+    text-align: left;
+    font-weight: 500;
+    color: #111827;
+    background-color: white;
+    border-bottom: 1px solid #e5e7eb;
+    font-family: var(--font-heading-family, inherit);
+  }
+
+  .size-chart-table td {
+    padding: 16px 24px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .size-chart-table td:first-child {
+    color: #111827;
+    font-weight: 500;
+  }
+
+  .size-chart-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    .size-chart-container {
+      padding: 0 16px;
+    }
+
+    .size-chart-title {
+      font-size: 1.875rem;
+    }
+
+    .size-chart-table th,
+    .size-chart-table td {
+      padding: 12px 16px;
+      font-size: 0.875rem;
+    }
+
+    .size-chart-unit-toggle {
+      max-width: 100%;
+    }
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+
+  .close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close-button:hover,
+  .close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+{% endstylesheet %}
+
+<!-- Modal Structure -->
+<div id="size-chart-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <div class="size-chart-section">
+  <div class="size-chart-container">
+    <h2 class="size-chart-title">{{ section.settings.title | default: 'Size Chart' }}</h2>
+
+    <!-- Unit toggle -->
+    <div class="size-chart-unit-toggle">
+      <button class="size-chart-unit-button active" id="inches-btn" onclick="window.switchUnit('inches')">
+        {{ section.settings.inches_label | default: 'Inches' }}
+      </button>
+      <button class="size-chart-unit-button" id="centimeters-btn" onclick="window.switchUnit('centimeters')">
+        {{ section.settings.centimeters_label | default: 'Centimeters' }}
+      </button>
+    </div>
+
+    <!-- Size chart table -->
+    <div class="size-chart-table-container">
+      <table class="size-chart-table">
+        <thead>
+          <tr>
+            <th>{{ section.settings.size_label | default: 'Size' }}</th>
+            <th id="bust-header">{{ section.settings.bust_label | default: 'Bust' }} ({{ section.settings.inches_unit | default: 'in' }})</th>
+            <th id="waist-header">{{ section.settings.waist_label | default: 'Waist' }} ({{ section.settings.inches_unit | default: 'in' }})</th>
+            <th id="hip-header">{{ section.settings.hip_label | default: 'Hip' }} ({{ section.settings.inches_unit | default: 'in' }})</th>
+          </tr>
+        </thead>
+        <tbody id="size-chart-body">
+          <!-- Table rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sizeChartData = {
+      inches: [
+        {% for block in section.blocks %}
+          {
+            size: "{{ block.settings.size_label | escape }}",
+            bust: "{{ block.settings.bust_inches | escape }}",
+            waist: "{{ block.settings.waist_inches | escape }}",
+            hip: "{{ block.settings.hip_inches | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ],
+      centimeters: [
+        {% for block in section.blocks %}
+          {
+            size: "{{ block.settings.size_label | escape }}",
+            bust: "{{ block.settings.bust_cm | escape }}",
+            waist: "{{ block.settings.waist_cm | escape }}",
+            hip: "{{ block.settings.hip_cm | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    };
+
+    let currentUnit = 'inches';
+
+    window.switchUnit = function(unit) {
+      currentUnit = unit;
+      
+      // Update button states
+      document.getElementById('inches-btn').classList.toggle('active', unit === 'inches');
+      document.getElementById('centimeters-btn').classList.toggle('active', unit === 'centimeters');
+      
+      // Update table headers
+      const unitLabel = unit === 'inches' ? '{{ section.settings.inches_unit | default: "in" }}' : '{{ section.settings.cm_unit | default: "cm" }}';
+      document.getElementById('bust-header').textContent = '{{ section.settings.bust_label | default: "Bust" }} (' + unitLabel + ')';
+      document.getElementById('waist-header').textContent = '{{ section.settings.waist_label | default: "Waist" }} (' + unitLabel + ')';
+      document.getElementById('hip-header').textContent = '{{ section.settings.hip_label | default: "Hip" }} (' + unitLabel + ')';
+      
+      // Update table body
+      updateTable();
+    };
+
+    function updateTable() {
+      const tbody = document.getElementById('size-chart-body');
+      const data = sizeChartData[currentUnit];
+      
+      tbody.innerHTML = '';
+      
+      data.forEach(function(row) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = 
+          '<td>' + row.size + '</td>' +
+          '<td>' + row.bust + '</td>' +
+          '<td>' + row.waist + '</td>' +
+          '<td>' + row.hip + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal functionality
+    const modal = document.getElementById("size-chart-modal");
+    const openButton = document.querySelector(".open-size-chart");
+    const closeButton = document.querySelector(".close-button");
+
+    openButton.addEventListener("click", function() {
+      modal.style.display = "flex";
+    });
+
+    closeButton.addEventListener("click", function() {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", function(event) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    // Initialize the table
+    updateTable();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Size Chart",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Size Chart"
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "inches_label",
+      "label": "Inches Label",
+      "default": "Inches"
+    },
+    {
+      "type": "text",
+      "id": "centimeters_label",
+      "label": "Centimeters Label",
+      "default": "Centimeters"
+    },
+    {
+      "type": "text",
+      "id": "size_label",
+      "label": "Size Column Label",
+      "default": "Size"
+    },
+    {
+      "type": "text",
+      "id": "bust_label",
+      "label": "Bust Column Label",
+      "default": "Bust"
+    },
+    {
+      "type": "text",
+      "id": "waist_label",
+      "label": "Waist Column Label",
+      "default": "Waist"
+    },
+    {
+      "type": "text",
+      "id": "hip_label",
+      "label": "Hip Column Label",
+      "default": "Hip"
+    },
+    {
+      "type": "text",
+      "id": "inches_unit",
+      "label": "Inches Unit Symbol",
+      "default": "in"
+    },
+    {
+      "type": "text",
+      "id": "cm_unit",
+      "label": "Centimeters Unit Symbol",
+      "default": "cm"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "size_row",
+      "name": "Size Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "size_label",
+          "label": "Size Label",
+          "default": "XS",
+          "info": "e.g., XS, S, M, L, XL"
+        },
+        {
+          "type": "header",
+          "content": "Measurements in Inches"
+        },
+        {
+          "type": "text",
+          "id": "bust_inches",
+          "label": "Bust (Inches)",
+          "default": "31-32",
+          "info": "Enter measurement range, e.g., 31-32"
+        },
+        {
+          "type": "text",
+          "id": "waist_inches",
+          "label": "Waist (Inches)",
+          "default": "24-25",
+          "info": "Enter measurement range, e.g., 24-25"
+        },
+        {
+          "type": "text",
+          "id": "hip_inches",
+          "label": "Hip (Inches)",
+          "default": "34-35",
+          "info": "Enter measurement range, e.g., 34-35"
+        },
+        {
+          "type": "header",
+          "content": "Measurements in Centimeters"
+        },
+        {
+          "type": "text",
+          "id": "bust_cm",
+          "label": "Bust (Centimeters)",
+          "default": "79-81",
+          "info": "Enter measurement range, e.g., 79-81"
+        },
+        {
+          "type": "text",
+          "id": "waist_cm",
+          "label": "Waist (Centimeters)",
+          "default": "61-64",
+          "info": "Enter measurement range, e.g., 61-64"
+        },
+        {
+          "type": "text",
+          "id": "hip_cm",
+          "label": "Hip (Centimeters)",
+          "default": "86-89",
+          "info": "Enter measurement range, e.g., 86-89"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Modal Size Chart",
+      "blocks": [
+        {
+          "type": "size_row",
+          "settings": {
+            "size_label": "XS",
+            "bust_inches": "31-32",
+            "waist_inches": "24-25",
+            "hip_inches": "34-35",
+            "bust_cm": "79-81",
+            "waist_cm": "61-64",
+            "hip_cm": "86-89"
+          }
+        },
+        {
+          "type": "size_row",
+          "settings": {
+            "size_label": "S",
+            "bust_inches": "33-34",
+            "waist_inches": "26-27",
+            "hip_inches": "36-37",
+            "bust_cm": "84-86",
+            "waist_cm": "66-69",
+            "hip_cm": "91-94"
+          }
+        },
+        {
+          "type": "size_row",
+          "settings": {
+            "size_label": "M",
+            "bust_inches": "35-36",
+            "waist_inches": "28-29",
+            "hip_inches": "38-39",
+            "bust_cm": "89-91",
+            "waist_cm": "71-74",
+            "hip_cm": "97-99"
+          }
+        },
+        {
+          "type": "size_row",
+          "settings": {
+            "size_label": "L",
+            "bust_inches": "37-38",
+            "waist_inches": "30-31",
+            "hip_inches": "40-41",
+            "bust_cm": "94-97",
+            "waist_cm": "76-79",
+            "hip_cm": "102-104"
+          }
+        },
+        {
+          "type": "size_row",
+          "settings": {
+            "size_label": "XL",
+            "bust_inches": "39-40",
+            "waist_inches": "32-33",
+            "hip_inches": "42-43",
+            "bust_cm": "99-102",
+            "waist_cm": "81-84",
+            "hip_cm": "107-109"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
