@@ -1,0 +1,555 @@
+{% comment %}
+  Product Reviews Section - Using Metaobjects
+  - Uses a metafield 'custom.da_stuff' which is a list of metaobject references
+  - Each metaobject is of type 'product_reviews' with fields:
+    - product_reviews.customer_name
+    - product_reviews.customer_image
+    - product_reviews.date
+    - product_reviews.stars
+  - Only displays if reviews exist for the current product
+{% endcomment %}
+
+{% assign reviews_references = product.metafields.custom.da_stuff.value %}
+{% assign total_reviews = 0 %}
+{% assign total_stars = 0 %}
+{% assign five_star_count = 0 %}
+{% assign four_star_count = 0 %}
+{% assign three_star_count = 0 %}
+{% assign two_star_count = 0 %}
+{% assign one_star_count = 0 %}
+
+{% assign list_thing = "" %}
+{% for piece in reviews_references %}
+  {% assign dog = piece | json %}
+  {% assign list_thing = list_thing | append: dog | append: '&&' %}
+{% endfor %}
+
+{% assign total_reviews = list_thing | split: '&&' %}
+
+{% comment %} Process reviews and calculate statistics {% endcomment %}
+{% if reviews_references != blank %}
+  {% for review_ref in reviews_references %}
+    {% assign review = review_ref %}
+    {% assign star_rating = review.stars | plus: 0 %}
+    {% assign total_stars = total_stars | plus: star_rating %}
+    
+    {% case star_rating %}
+      {% when 5 %}
+        {% assign five_star_count = five_star_count | plus: 1 %}
+      {% when 4 %}
+        {% assign four_star_count = four_star_count | plus: 1 %}
+      {% when 3 %}
+        {% assign three_star_count = three_star_count | plus: 1 %}
+      {% when 2 %}
+        {% assign two_star_count = two_star_count | plus: 1 %}
+      {% when 1 %}
+        {% assign one_star_count = one_star_count | plus: 1 %}
+    {% endcase %}
+  {% endfor %}
+
+  {% if total_reviews.size > 0 %}
+    {% assign average_rating = total_stars | divided_by: total_reviews.size | round: 1 %}
+    {% assign five_star_percent = five_star_count | times: 100 | divided_by: total_reviews.size %}
+    {% assign four_star_percent = four_star_count | times: 100 | divided_by: total_reviews.size %}
+    {% assign three_star_percent = three_star_count | times: 100 | divided_by: total_reviews.size %}
+    {% assign two_star_percent = two_star_count | times: 100 | divided_by: total_reviews.size %}
+    {% assign one_star_percent = one_star_count | times: 100 | divided_by: total_reviews.size %}
+  {% endif %}
+{% endif %}
+
+{% if total_reviews.size > 0 %}
+<div class="product-reviews-section" id="product-reviews">
+  <style>
+    .product-reviews-section {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: white;
+    }
+
+    .reviews-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 32px;
+    }
+
+    .rating-overview {
+      margin-bottom: 32px;
+    }
+
+    .rating-summary {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .rating-score {
+      text-align: left;
+    }
+
+    .score-number {
+      font-size: 48px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .star {
+      width: 20px;
+      height: 20px;
+    }
+
+    .star.filled {
+      color: #fbbf24;
+      fill: #fbbf24;
+    }
+
+    .star.empty {
+      color: #e5e7eb;
+      fill: #e5e7eb;
+    }
+
+    .stars.small .star {
+      width: 16px;
+      height: 16px;
+    }
+
+    .review-count {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .rating-breakdown {
+      margin-bottom: 24px;
+    }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .rating-number {
+      font-size: 14px;
+      color: #6b7280;
+      width: 8px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      background-color: #e5e7eb;
+      border-radius: 9999px;
+      height: 8px;
+      max-width: 384px;
+    }
+
+    .progress-fill {
+      background-color: #374151;
+      height: 8px;
+      border-radius: 9999px;
+    }
+
+    .percentage {
+      font-size: 14px;
+      color: #9ca3af;
+      width: 32px;
+    }
+
+    .write-review-btn {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .write-review-btn:hover {
+      background-color: #2563eb;
+    }
+
+    .reviews-section {
+      margin-top: 32px;
+    }
+
+    .reviews-section-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 24px;
+    }
+
+    .review {
+      border-bottom: 1px solid #f3f4f6;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .review:last-child {
+      border-bottom: none;
+    }
+
+    .review-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 14px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .review-content {
+      flex: 1;
+    }
+
+    .reviewer-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .reviewer-name {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .review-date {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .review-rating {
+      margin-bottom: 12px;
+    }
+
+    .review-text {
+      color: #374151;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .review-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .action-btn:hover {
+      color: #374151;
+    }
+
+    .action-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .load-more {
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .load-more-btn {
+      background-color: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 8px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .load-more-btn:hover {
+      background-color: #f9fafb;
+    }
+
+    @media (max-width: 768px) {
+      .product-reviews-section {
+        padding: 16px;
+      }
+      
+      .rating-summary {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .progress-fill {
+      display: block!important;
+    }
+
+    .avatar {
+      display: flex!important;
+    }
+  </style>
+
+  <h1 class="reviews-title">{{ product.title }}</h1>
+  <!-- Rating Overview -->
+  <div class="rating-overview">
+    <div class="rating-summary">
+      <div class="rating-score">
+        <div class="score-number">{{ average_rating }}</div>
+        <div class="stars">
+          {% assign full_stars = average_rating | floor | default: 0 %}
+          {% assign decimal_part = average_rating | minus: full_stars %}
+          {% for i in (1..5) %}
+            {% if i <= full_stars %}
+              {% assign plus_one = i | plus: 1 %}
+              <svg class="star filled" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% elsif i == plus_one %}
+              <svg class="star" viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id="half-fill-{{ section.id }}" x1="0" x2="100%" y1="0" y2="0">
+                    <stop offset="50%" stop-color="#fbbf24" />
+                    <stop offset="50%" stop-color="#e5e7eb" />
+                  </linearGradient>
+                </defs>
+                <path fill="url(#half-fill-{{ section.id }})" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% else %}
+              <svg class="star empty" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="review-count">{{ total_reviews.size }} review{% if total_reviews.size != 1 %}s{% endif %}</div>
+      </div>
+    </div>
+
+    {% if section.settings.show_rating_breakdown %}
+    <!-- Rating Breakdown -->
+    <div class="rating-breakdown">
+      <div class="rating-row">
+        <span class="rating-number">5</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ five_star_percent }}%"></div>
+        </div>
+        <span class="percentage">{{ five_star_percent }}%</span>
+      </div>
+      <div class="rating-row">
+        <span class="rating-number">4</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ four_star_percent }}%"></div>
+        </div>
+        <span class="percentage">{{ four_star_percent }}%</span>
+      </div>
+      <div class="rating-row">
+        <span class="rating-number">3</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ three_star_percent }}%"></div>
+        </div>
+        <span class="percentage">{{ three_star_percent }}%</span>
+      </div>
+      <div class="rating-row">
+        <span class="rating-number">2</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ two_star_percent }}%"></div>
+        </div>
+        <span class="percentage">{{ two_star_percent }}%</span>
+      </div>
+      <div class="rating-row">
+        <span class="rating-number">1</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ one_star_percent }}%"></div>
+        </div>
+        <span class="percentage">{{ one_star_percent }}%</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="reviews-section">
+    <h2 class="reviews-section-title">Reviews</h2>
+
+      <div class="load-more">
+        <button style="display: none;" id="show-less-reviews" class="load-more-btn">Show Less Reviews</button>
+      </div>
+
+    <div class="reviews-container">
+      {% assign reviews_per_page = section.settings.reviews_per_page | default: 3 | plus: 0 %}
+      {% assign visible_reviews = reviews_references | slice: 0, reviews_per_page %}
+
+      {% assign reviews_per_page = section.settings.reviews_per_page | default: 3 | plus: 0 %}
+      {% for review in reviews_references %}
+        {% assign review_index = forloop.index0 %}
+        <div class="review {% if review_index >= reviews_per_page %}hidden-review{% endif %}"{% if review_index >= reviews_per_page %} style="display: none;"{% endif %}>
+
+          <div class="review-header">
+            {% if review.customer_image != blank %}
+              <div class="avatar" style="background-image: url('{{ review.customer_image | img_url: '80x80', crop: 'center' }}');"></div>
+            {% else %}
+              <div class="avatar">
+                {% assign name_parts = review.customer_name | split: ' ' %}
+                {{ name_parts[0] | slice: 0, 1 | upcase }}{% if name_parts.size > 1 %}{{ name_parts.last | slice: 0, 1 | upcase }}{% endif %}
+              </div>
+            {% endif %}
+            <div class="review-content">
+              <div class="reviewer-info">
+                <span class="reviewer-name">{{ review.customer_name }}</span>
+                {% if review.date != blank %}
+                  <span class="review-date">{{ review.date | date: '%B %d, %Y' }}</span>
+                {% endif %}
+              </div>
+              <div class="review-rating">
+                <div class="stars small">
+                  {% assign review_rating = review.stars | plus: 0 %}
+                  {% for i in (1..5) %}
+                    {% if i <= review_rating %}
+                      <svg class="star filled" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    {% else %}
+                      <svg class="star empty" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              {% if review.review != blank %}
+                <p class="review-text">{{ review.review }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% if total_reviews.size > reviews_per_page %}
+      <div class="load-more">
+        <button class="load-more-btn" id="load-more-reviews">Load More Reviews</button>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const reviewsPerPage = {{ section.settings.reviews_per_page | default: 3 }};
+    let currentIndex = reviewsPerPage;
+    const reviews = document.querySelectorAll('.review.hidden-review');
+    const button = document.getElementById('load-more-reviews');
+    const showLess = document.querySelector('#show-less-reviews')
+
+    button.addEventListener('click', () => {
+      let count = 0;
+      for (let i = 0; i < reviews.length; i++) {
+        if (reviews[i].style.display === 'none' && count < reviewsPerPage) {
+          reviews[i].style.display = 'block';
+          count++;
+        }
+      }
+
+      // Hide button if no more hidden reviews
+      const remaining = Array.from(reviews).filter(r => r.style.display === 'none');
+      if (remaining.length === 0) {
+        button.style.display = 'none';
+      }
+
+      showLess.style.display = 'inline-block'
+    });
+
+    showLess.addEventListener('click', () => {
+      let count = 0;
+      for (let i = 0; i < reviews.length; i++) {
+        if (reviews[i].style.display === 'block') {
+          reviews[i].style.display = 'none';
+          count++;
+        }
+      }
+      showLess.style.display = 'none'
+      button.style.display = 'inline-block';
+    })
+  });
+</script>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Reviews",
+  "tag": "section",
+  "class": "product-reviews-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Reviews",
+      "info": "Leave blank to use product title"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating_breakdown",
+      "label": "Show Rating Breakdown",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "reviews_per_page",
+      "label": "Reviews Per Page",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "5",
+          "label": "5"
+        },
+        {
+          "value": "10",
+          "label": "10"
+        }
+      ],
+      "default": "3"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Reviews",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
