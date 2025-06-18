@@ -1,0 +1,251 @@
+{% doc %}
+ONLY USE THIS FILE IF YOU DO NOT HAVE THEME BLOCKS SUPPORT. OTHERWISE USE THE OTHER 2 FILES.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-model-info-box-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.padding }}px;
+    max-width: {{ block.settings.max_width }}px;
+    width: 100%;
+  }
+
+  .ai-model-info-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .ai-model-info-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-model-info-item-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+  }
+
+  .ai-model-info-label-{{ ai_gen_id }} {
+    font-weight: 500;
+  }
+
+  .ai-model-info-value-{{ ai_gen_id }} {
+    font-weight: 400;
+  }
+
+  .ai-model-info-empty-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    opacity: 0.7;
+    font-style: italic;
+  }
+{% endstyle %}
+  {% liquid
+    assign model_size = product.metafields[block.settings.size_namespace][block.settings.size_key]
+    assign model_height = product.metafields[block.settings.height_namespace][block.settings.height_key]
+    assign has_info = false
+    
+    if model_size != blank or model_height != blank
+      assign has_info = true
+    endif
+  %}
+
+<div 
+  class="ai-model-info-box-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  {% unless has_info %}
+    style="display: none;"
+  {% endunless %}
+>
+  {% if block.settings.title != blank %}
+    <h3 class="ai-model-info-title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+  {% endif %}
+
+
+  {% if has_info %}
+    <div class="ai-model-info-content-{{ ai_gen_id }}">
+      {% if model_size != blank %}
+        <div class="ai-model-info-item-{{ ai_gen_id }}">
+          <span class="ai-model-info-label-{{ ai_gen_id }}">{{ block.settings.size_label }}</span>
+          <span class="ai-model-info-value-{{ ai_gen_id }}">{{ model_size }}</span>
+        </div>
+      {% endif %}
+
+      {% if model_height != blank %}
+        <div class="ai-model-info-item-{{ ai_gen_id }}">
+          <span class="ai-model-info-label-{{ ai_gen_id }}">{{ block.settings.height_label }}</span>
+          <span class="ai-model-info-value-{{ ai_gen_id }}">{{ model_height }}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div style="display: none;">
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Model Info Box",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Model Info"
+    },
+    {
+      "type": "text",
+      "id": "size_label",
+      "label": "Size label",
+      "default": "Size"
+    },
+    {
+      "type": "text",
+      "id": "height_label",
+      "label": "Height label",
+      "default": "Height"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty state message",
+      "default": "Model information not available"
+    },
+    {
+      "type": "header",
+      "content": "Metafield Settings"
+    },
+    {
+      "type": "text",
+      "id": "size_namespace",
+      "label": "Size metafield namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "size_key",
+      "label": "Size metafield key",
+      "default": "model_size"
+    },
+    {
+      "type": "text",
+      "id": "height_namespace",
+      "label": "Height metafield namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "height_key",
+      "label": "Height metafield key",
+      "default": "model_height"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Text font size",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Model Info Box"
+    }
+  ]
+}
+{% endschema %}

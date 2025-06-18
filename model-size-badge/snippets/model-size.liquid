@@ -1,0 +1,90 @@
+{% assign ai_gen_id = 123456789 %}
+
+{% style %}
+  .ai-model-info-box-{{ ai_gen_id }} {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 300px;
+    width: 100%;
+  }
+
+  .ai-model-info-title-{{ ai_gen_id }} {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .ai-model-info-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-model-info-item-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #333333;
+    font-size: 14px;
+  }
+
+  .ai-model-info-label-{{ ai_gen_id }} {
+    font-weight: 500;
+  }
+
+  .ai-model-info-value-{{ ai_gen_id }} {
+    font-weight: 400;
+  }
+
+  .ai-model-info-empty-{{ ai_gen_id }} {
+    color: #333333;
+    font-size: 14px;
+    opacity: 0.7;
+    font-style: italic;
+  }
+{% endstyle %}
+
+{% liquid
+  assign model_size = product.metafields.custom.model_size
+  assign model_height = product.metafields.custom.model_height
+  assign has_info = false
+
+  if model_size != blank or model_height != blank
+    assign has_info = true
+  endif
+%}
+
+<div 
+  class="ai-model-info-box-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  {% unless has_info %}
+    style="display: none;"
+  {% endunless %}
+>
+  <h3 class="ai-model-info-title-{{ ai_gen_id }}">Model Info</h3>
+
+  {% if has_info %}
+    <div class="ai-model-info-content-{{ ai_gen_id }}">
+      {% if model_size != blank %}
+        <div class="ai-model-info-item-{{ ai_gen_id }}">
+          <span class="ai-model-info-label-{{ ai_gen_id }}">Size</span>
+          <span class="ai-model-info-value-{{ ai_gen_id }}">{{ model_size }}</span>
+        </div>
+      {% endif %}
+
+      {% if model_height != blank %}
+        <div class="ai-model-info-item-{{ ai_gen_id }}">
+          <span class="ai-model-info-label-{{ ai_gen_id }}">Height</span>
+          <span class="ai-model-info-value-{{ ai_gen_id }}">{{ model_height }}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="ai-model-info-empty-{{ ai_gen_id }}">
+      Model information not available
+    </div>
+  {% endif %}
+</div>
