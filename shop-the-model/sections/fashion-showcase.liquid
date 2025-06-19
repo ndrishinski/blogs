@@ -1,0 +1,607 @@
+<style>
+  .fashion-showcase-{{ section.id }} * {
+    margin: 5px 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .fashion-showcase-{{ section.id }} {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .fashion-showcase-{{ section.id }} .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: {{ section.settings.section_height }}px;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  .fashion-showcase-{{ section.id }} .left-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    overflow-y: auto;
+    background-color: {{ section.settings.left_section_bg }};
+  }
+
+  .fashion-showcase-{{ section.id }} .content-wrapper {
+    /* max-width: 28rem; */
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .fashion-showcase-{{ section.id }} .main-title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: {{ section.settings.title_weight }};
+    color: {{ section.settings.title_color }};
+    margin-bottom: 2rem;
+    text-align: {{ section.settings.title_alignment }};
+    line-height: 1.2;
+  }
+
+  .fashion-showcase-{{ section.id }} .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-card {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .fashion-showcase-{{ section.id }} .product-image {
+    aspect-ratio: 4/5;
+    background-color: {{ section.settings.product_bg_color }};
+    border-radius: {{ section.settings.image_border_radius }}px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-card:hover .product-image img {
+    transform: scale(1.05);
+  }
+
+  .fashion-showcase-{{ section.id }} .color-swatches {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .fashion-showcase-{{ section.id }} .color-swatch {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-name {
+    font-size: {{ section.settings.product_name_size }}px;
+    font-weight: 500;
+    color: {{ section.settings.product_text_color }};
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .fashion-showcase-{{ section.id }} .product-price {
+    font-size: {{ section.settings.product_price_size }}px;
+    font-weight: 600;
+    color: {{ section.settings.price_color }};
+  }
+
+  .fashion-showcase-{{ section.id }} .shop-button {
+    background: none;
+    border: none;
+    color: {{ section.settings.button_color }};
+    font-size: {{ section.settings.button_size }}px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+    padding: 0;
+    text-decoration: none;
+  }
+
+  .fashion-showcase-{{ section.id }} .shop-button:hover {
+    color: {{ section.settings.button_hover_color }};
+  }
+
+  .fashion-showcase-{{ section.id }} .arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.3s ease;
+  }
+
+  .fashion-showcase-{{ section.id }} .shop-button:hover .arrow-icon {
+    transform: translateX(0.25rem);
+  }
+
+  .fashion-showcase-{{ section.id }} .right-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fashion-showcase-{{ section.id }} .lifestyle-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Mobile Responsive Design */
+  @media (max-width: 768px) {
+    .fashion-showcase-{{ section.id }} .container {
+      grid-template-columns: 1fr;
+      height: auto;
+      min-height: {{ section.settings.section_height }}px;
+    }
+
+    .fashion-showcase-{{ section.id }} .left-section {
+      padding: 1.5rem 1rem;
+      height: auto;
+      min-height: 400px;
+    }
+
+    .fashion-showcase-{{ section.id }} .content-wrapper {
+      max-width: 100%;
+    }
+
+    .fashion-showcase-{{ section.id }} .main-title {
+      font-size: {{ section.settings.title_size | minus: 8 }}px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .products-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .product-name {
+      font-size: {{ section.settings.product_name_size | minus: 2 }}px;
+      line-height: 1.2;
+    }
+
+    .fashion-showcase-{{ section.id }} .product-price {
+      font-size: {{ section.settings.product_price_size | minus: 2 }}px;
+    }
+
+    .fashion-showcase-{{ section.id }} .color-swatch {
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .shop-button {
+      justify-content: center;
+      font-size: {{ section.settings.button_size | minus: 2 }}px;
+    }
+
+    .fashion-showcase-{{ section.id }} .right-section {
+      /* height: 200px; */
+      min-height: 400px;
+      order: -1;
+    }
+  }
+
+  /* Small mobile devices */
+  @media (max-width: 480px) {
+    .fashion-showcase-{{ section.id }} .left-section {
+      padding: 1rem 0.75rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .main-title {
+      font-size: {{ section.settings.title_size | minus: 12 }}px;
+      margin-bottom: 1.25rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .products-grid {
+      gap: 0.75rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .product-image {
+      margin-bottom: 0.5rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .color-swatches {
+      gap: 0.3rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .product-name {
+      font-size: {{ section.settings.product_name_size | minus: 4 }}px;
+      margin-bottom: 0.3rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .product-price {
+      font-size: {{ section.settings.product_price_size | minus: 4 }}px;
+    }
+  }
+
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .fashion-showcase-{{ section.id }} .container {
+      height: {{ section.settings.section_height }}px;
+    }
+
+    .fashion-showcase-{{ section.id }} .left-section {
+      padding: 1.5rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .main-title {
+      font-size: {{ section.settings.title_size | minus: 4 }}px;
+      margin-bottom: 1.75rem;
+    }
+
+    .fashion-showcase-{{ section.id }} .products-grid {
+      gap: 1.25rem;
+    }
+  }
+</style>
+
+<div class="fashion-showcase-{{ section.id }}">
+  <div class="container">
+    <!-- Left Section - Product Showcase -->
+    <div class="left-section">
+      <div class="content-wrapper">
+        {% if section.settings.section_title != blank %}
+          <h1 class="main-title">{{ section.settings.section_title }}</h1>
+        {% endif %}
+
+        <div class="products-grid">
+          {% for block in section.blocks %}
+            {% if block.type == 'product' %}
+              <div class="product-card" {{ block.shopify_attributes }}>
+                {% if block.settings.product_image != blank %}
+                  <div class="product-image">
+                    <img src="{{ block.settings.product_image | img_url: '300x375' }}" 
+                         alt="{{ block.settings.product_name | escape }}"
+                         loading="lazy">
+                  </div>
+                {% endif %}
+
+                {% if block.settings.show_color_swatches %}
+                  <div class="color-swatches">
+                    {% if block.settings.color_1 != blank %}
+                      <div class="color-swatch" style="background-color: {{ block.settings.color_1 }};"></div>
+                    {% endif %}
+                    {% if block.settings.color_2 != blank %}
+                      <div class="color-swatch" style="background-color: {{ block.settings.color_2 }};"></div>
+                    {% endif %}
+                    {% if block.settings.color_3 != blank %}
+                      <div class="color-swatch" style="background-color: {{ block.settings.color_3 }};"></div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if block.settings.product_name != blank %}
+                  <h3 class="product-name">{{ block.settings.product_name }}</h3>
+                {% endif %}
+
+                {% if block.settings.product_price != blank %}
+                  <p class="product-price">${{ block.settings.product_price }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_link | default: '#' }}" class="shop-button">
+            {{ section.settings.button_text }}
+            <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Section - Lifestyle Image -->
+    <div class="right-section">
+      {% if section.settings.lifestyle_image != blank %}
+        <img src="{{ section.settings.lifestyle_image | img_url: '800x1200' }}" 
+             alt="{{ section.settings.lifestyle_image_alt | escape }}" 
+             class="lifestyle-image"
+             loading="lazy">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Fashion Showcase",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Shop women's look"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Section Height (px)",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "default": 600
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "left_section_bg",
+      "label": "Left Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Title Settings"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Font Size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Font Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "300"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#374151"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings"
+    },
+    {
+      "type": "color",
+      "id": "product_bg_color",
+      "label": "Product Image Background",
+      "default": "#f9fafb"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "product_name_size",
+      "label": "Product Name Font Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "label": "Product Price Font Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "product_text_color",
+      "label": "Product Text Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price Color",
+      "default": "#111827"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop woman"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "label": "Button Font Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#374151"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button Hover Color",
+      "default": "#111827"
+    },
+    {
+      "type": "header",
+      "content": "Lifestyle Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "lifestyle_image",
+      "label": "Lifestyle Image"
+    },
+    {
+      "type": "text",
+      "id": "lifestyle_image_alt",
+      "label": "Lifestyle Image Alt Text",
+      "default": "Fashion lifestyle image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Product Image"
+        },
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Product Name",
+          "default": "Product Name"
+        },
+        {
+          "type": "text",
+          "id": "product_price",
+          "label": "Product Price",
+          "default": "30"
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product Link"
+        },
+        {
+          "type": "header",
+          "content": "Color Swatches"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_color_swatches",
+          "label": "Show Color Swatches",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "color_1",
+          "label": "Color 1",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "color_2",
+          "label": "Color 2",
+          "default": "#8B4513"
+        },
+        {
+          "type": "color",
+          "id": "color_3",
+          "label": "Color 3",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fashion Showcase",
+      "blocks": [
+        {
+          "type": "product",
+          "settings": {
+            "product_name": "Linen Blend Ladder Trim Set Top",
+            "product_price": "30",
+            "color_1": "#000000",
+            "color_2": "#8B4513",
+            "color_3": "#FFFFFF"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "product_name": "The A&F Scarlett Linen Blend Mini Skirt",
+            "product_price": "60",
+            "color_1": "#000000",
+            "color_2": "#8B4513",
+            "color_3": "#D2B48C"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "product_name": "Vegan Leather Flat Sandals",
+            "product_price": "60",
+            "color_1": "#000000",
+            "color_2": "#FFD700",
+            "color_3": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
