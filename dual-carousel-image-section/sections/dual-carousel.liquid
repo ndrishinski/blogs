@@ -94,7 +94,6 @@
     justify-content: center !important;
     padding: 48px !important;
     unicode-bidi: isolate !important;
-
   }
 
   #dual-carousel-section .content-wrapper {
@@ -111,7 +110,9 @@
   }
 
   #dual-carousel-section .header {
-    display: block !important;
+    display: flex !important;
+    justify-content: center !important;
+    flex-direction: column !important;
     font-family: -apple-system
     , "system-ui"
     , "Segoe UI"
@@ -160,7 +161,6 @@
     margin-inline-start: 0 !important;
     unicode-bidi: isolate !important;
     width: 503px !important;
-
   }
 
   #dual-carousel-section .product-section {
@@ -484,29 +484,29 @@
 <script>
   const steps = [
     {% for i in (1..5) %}
-      {% assign step_label_key = 'step_label_' | append: i %}
-      {% assign product_name_key = 'product_name_' | append: i %}
-      {% assign product_description_key = 'product_description_' | append: i %}
-      {
-        number: "0{{ i }}",
-        label: "{{ section.settings[step_label_key] }}",
+  {% assign step_label_key = 'step_label_' | append: i %}
+  {% assign product_name_key = 'product_name_' | append: i %}
+  {% assign product_description_key = 'product_description_' | append: i %}
+  {
+    number: "0{{ i }}",
+      label: "{{ section.settings[step_label_key] }}",
         product: {
-          name: "{{ section.settings[product_name_key] }}",
-          description: "{{ section.settings[product_description_key] }}"
-        }
-      }{% unless i == 5 %},{% endunless %}
-    {% endfor %}
+      name: "{{ section.settings[product_name_key] }}",
+        description: "{{ section.settings[product_description_key] }}"
+    }
+  } {% unless i == 5 %}, {% endunless %}
+  {% endfor %}
   ];
-  
+
   let currentStep = 0;
   let isTransitioning = false;
-  
+
   const portraitCarousel = document.getElementById('portraitCarousel');
   const productCarousel = document.getElementById('productCarousel');
   const productInfo = document.getElementById('productInfo');
   const productName = document.getElementById('productName');
   const productDescription = document.getElementById('productDescription');
-  
+
   function updateActiveButton(stepIndex) {
     document.querySelectorAll('.step-button').forEach((button, index) => {
       const circle = button.querySelector('.step-circle');
@@ -523,36 +523,36 @@
       }
     });
   }
-  
+
   function slideToStep(stepIndex) {
     if (stepIndex === currentStep || isTransitioning) return;
-  
+
     isTransitioning = true;
     const translateX = -stepIndex * 20; // Each slide is 20% width
-  
+
     // Slide both carousels
     portraitCarousel.style.transform = `translateX(${translateX}%)`;
     productCarousel.style.transform = `translateX(${translateX}%)`;
-  
+
     // Add transitioning class for text fade
     productInfo.classList.add('transitioning');
 
     updateActiveButton(stepIndex);
-  
+
     // Update text content after a short delay
     setTimeout(() => {
       productName.textContent = steps[stepIndex].product.name;
       productDescription.textContent = steps[stepIndex].product.description;
       productInfo.classList.remove('transitioning');
     }, 100);
-  
+
     // Reset transition flag
     setTimeout(() => {
       currentStep = stepIndex;
       isTransitioning = false;
     }, 400);
   }
-  
+
   // Add event listeners
   document.querySelectorAll('.step-button').forEach((button, index) => {
     button.addEventListener('mouseenter', () => slideToStep(index));
