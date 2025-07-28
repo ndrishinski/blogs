@@ -1,0 +1,374 @@
+<style>
+  .beauty-section {
+    display: flex;
+    max-height: 700px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .beauty-section__image {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .beauty-section__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .beauty-section__content {
+    flex: 1;
+    background-color: #e8f4f8;
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .beauty-section__title {
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .beauty-section__subtitle {
+    font-size: 16px;
+    margin-bottom: 40px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .beauty-section__item {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #d0d0d0;
+  }
+
+  .beauty-section__item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .beauty-section__item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .beauty-section__item-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #333;
+  }
+
+  .beauty-section__badge {
+    background-color: #4a90e2;
+    color: white;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .beauty-section__plus {
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+
+  .beauty-section__plus.rotated {
+    transform: rotate(45deg);
+  }
+
+  .beauty-section__description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding-top 0.3s ease;
+  }
+
+  .beauty-section__description.expanded {
+    max-height: 200px;
+    padding-top: 10px;
+  }
+
+  .beauty-section__link {
+    color: #4a90e2;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .beauty-section {
+      flex-direction: column;
+      min-height: auto;
+      max-height: none;
+    }
+
+    .beauty-section__image {
+      height: 500px;
+      min-height: 400px;
+    }
+
+    .beauty-section__content {
+      padding: 40px 30px;
+    }
+
+    .beauty-section__title {
+      font-size: 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .beauty-section__image {
+      height: 400px;
+      min-height: 350px;
+      max-height: none;
+    }
+
+    .beauty-section__content {
+      padding: 30px 20px;
+    }
+
+    .beauty-section__title {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<section class="beauty-section">
+  <div class="beauty-section__image">
+    {% if section.settings.image %}
+      {{ section.settings.image | image_url: width: 700 | image_tag: alt: section.settings.image.alt }}
+    {% else %}
+      <img src="{{ 'placeholder.svg' | asset_url }}" alt="Beauty formulations" style="width: 100%; height: 100%; object-fit: cover;">
+    {% endif %}
+  </div>
+
+  <div class="beauty-section__content">
+    <h2 class="beauty-section__title">
+      {{ section.settings.title | default: "Essential beauty formulations from California." }}
+    </h2>
+    
+    <p class="beauty-section__subtitle">
+      {{ section.settings.subtitle | default: "For the skin and senses." }}
+    </p>
+
+    <div class="beauty-section__item">
+      <div class="beauty-section__item-header" onclick="toggleAccordion(this)">
+        <h3 class="beauty-section__item-title">
+          {{ section.settings.rewards_title | default: "JOIN THE SELF-CARE CLUB" }}
+        </h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="beauty-section__badge">
+            {{ section.settings.rewards_badge | default: "Rewards" }}
+          </span>
+          <span class="beauty-section__plus">+</span>
+        </div>
+      </div>
+      <div class="beauty-section__description">
+        {{ section.settings.rewards_description | default: "Earn points every time you shop when you join our rewards program. Redeem points for exclusive discounts, early access to sales and free products." }}
+        {% if section.settings.rewards_link_text %}
+          <a href="{{ section.settings.rewards_link_url }}" class="beauty-section__link">
+            {{ section.settings.rewards_link_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="beauty-section__item">
+      <div class="beauty-section__item-header" onclick="toggleAccordion(this)">
+        <h3 class="beauty-section__item-title">
+          {{ section.settings.subscribe_title | default: "SUBSCRIBE & SAVE" }}
+        </h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="beauty-section__badge">
+            {{ section.settings.subscribe_badge | default: "Get 15% Off" }}
+          </span>
+          <span class="beauty-section__plus">+</span>
+        </div>
+      </div>
+      <div class="beauty-section__description">
+        {{ section.settings.subscribe_description | default: "Save time and money with automatic deliveries. Customize your schedule and never run out of your favorite products." }}
+        {% if section.settings.subscribe_link_text %}
+          <a href="{{ section.settings.subscribe_link_url }}" class="beauty-section__link">
+            {{ section.settings.subscribe_link_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="beauty-section__item">
+      <div class="beauty-section__item-header" onclick="toggleAccordion(this)">
+        <h3 class="beauty-section__item-title">
+          {{ section.settings.recycle_title | default: "RECYCLE WITH US" }}
+        </h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="beauty-section__badge">
+            {{ section.settings.recycle_badge | default: "Get $2% back" }}
+          </span>
+          <span class="beauty-section__plus">+</span>
+        </div>
+      </div>
+      <div class="beauty-section__description">
+        {{ section.settings.recycle_description | default: "Send back your empty containers and get rewarded for helping us create a more sustainable future." }}
+        {% if section.settings.recycle_link_text %}
+          <a href="{{ section.settings.recycle_link_url }}" class="beauty-section__link">
+            {{ section.settings.recycle_link_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleAccordion(header) {
+    const description = header.nextElementSibling;
+    const plusIcon = header.querySelector('.beauty-section__plus');
+    
+    // Toggle the expanded class on description
+    description.classList.toggle('expanded');
+    
+    // Toggle the rotated class on plus icon
+    plusIcon.classList.toggle('rotated');
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Footer Dropdown",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Section Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Main Title",
+      "default": "Essential beauty formulations from California."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "For the skin and senses."
+    },
+    {
+      "type": "header",
+      "content": "Rewards Section"
+    },
+    {
+      "type": "text",
+      "id": "rewards_title",
+      "label": "Rewards Section Title",
+      "default": "JOIN THE SELF-CARE CLUB"
+    },
+    {
+      "type": "text",
+      "id": "rewards_badge",
+      "label": "Rewards Badge Text",
+      "default": "Rewards"
+    },
+    {
+      "type": "textarea",
+      "id": "rewards_description",
+      "label": "Rewards Description",
+      "default": "Earn points every time you shop when you join our rewards program. Redeem points for exclusive discounts, early access to sales and free products."
+    },
+    {
+      "type": "text",
+      "id": "rewards_link_text",
+      "label": "Rewards Link Text"
+    },
+    {
+      "type": "url",
+      "id": "rewards_link_url",
+      "label": "Rewards Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Subscribe Section"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_title",
+      "label": "Subscribe Section Title",
+      "default": "SUBSCRIBE & SAVE"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_badge",
+      "label": "Subscribe Badge Text",
+      "default": "Get 15% Off"
+    },
+    {
+      "type": "textarea",
+      "id": "subscribe_description",
+      "label": "Subscribe Description",
+      "default": "Save time and money with automatic deliveries. Customize your schedule and never run out of your favorite products."
+    },
+    {
+      "type": "text",
+      "id": "subscribe_link_text",
+      "label": "Subscribe Link Text"
+    },
+    {
+      "type": "url",
+      "id": "subscribe_link_url",
+      "label": "Subscribe Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Recycle Section"
+    },
+    {
+      "type": "text",
+      "id": "recycle_title",
+      "label": "Recycle Section Title",
+      "default": "RECYCLE WITH US"
+    },
+    {
+      "type": "text",
+      "id": "recycle_badge",
+      "label": "Recycle Badge Text",
+      "default": "Get $2% back"
+    },
+    {
+      "type": "textarea",
+      "id": "recycle_description",
+      "label": "Recycle Description",
+      "default": "Send back your empty containers and get rewarded for helping us create a more sustainable future."
+    },
+    {
+      "type": "text",
+      "id": "recycle_link_text",
+      "label": "Recycle Link Text"
+    },
+    {
+      "type": "url",
+      "id": "recycle_link_url",
+      "label": "Recycle Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer Dropdown"
+    }
+  ]
+}
+{% endschema %}

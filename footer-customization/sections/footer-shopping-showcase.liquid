@@ -1,0 +1,341 @@
+<style>
+  .product-showcase {
+    max-height: 611px;
+    padding: 40px 20px;
+    overflow: hidden;
+  }
+
+  .product-showcase__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+  }
+
+  .product-showcase__item {
+    position: relative;
+    width: 400px;
+    height: 500px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .product-showcase__item:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-showcase__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-showcase__image--hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-showcase__item:hover .product-showcase__image--hover {
+    opacity: 1;
+  }
+
+  .product-showcase__item:hover .product-showcase__image--main {
+    opacity: 0;
+  }
+
+  .product-showcase__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    padding: 60px 30px 30px;
+    color: white;
+  }
+
+  .product-showcase__category {
+    font-size: 48px;
+    font-weight: bold;
+    text-transform: lowercase;
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+
+  .product-showcase__title {
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .product-showcase__description {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 15px;
+  }
+
+  .product-showcase__price {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .product-showcase__button {
+    background: white;
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .product-showcase__button:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+  }
+
+  .product-showcase__badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2;
+  }
+
+  @media (min-width: 768px) {
+    .hide-on-desktop {
+      display: none;
+    }
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .product-showcase {
+      padding: 20px 0;
+      max-height: none;
+    }
+
+    .product-showcase__container {
+      flex-direction: row;
+      justify-content: flex-start;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 20px;
+      gap: 20px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin-left: 20px;
+    }
+
+    .product-showcase__container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .product-showcase__item {
+      flex-shrink: 0;
+      width: 280px;
+      height: 400px;
+      scroll-snap-align: start;
+    }
+
+    .product-showcase__item:hover .product-showcase__image--hover {
+      opacity: 0;
+    }
+
+    .product-showcase__item:hover .product-showcase__image--main {
+      opacity: 1;
+    }
+
+    .product-showcase__category {
+      font-size: 36px;
+    }
+
+    .product-showcase__content {
+      padding: 40px 20px 20px;
+    }
+  }
+</style>
+
+<section class="product-showcase">
+  <div class="product-showcase__container">
+    {% for block in section.blocks %}
+      <div class="product-showcase__item {% if forloop.index >= 4 %}hide-on-desktop {% endif %}" {{ block.shopify_attributes }}>
+        {% if block.settings.badge_text != blank %}
+          <div class="product-showcase__badge">
+            {{ block.settings.badge_text }}
+          </div>
+        {% endif %}
+        
+        {% if block.settings.image != blank %}
+          <img 
+            class="product-showcase__image product-showcase__image--main" 
+            src="{{ block.settings.image | img_url: '700x900' }}" 
+            alt="{{ block.settings.image.alt | default: block.settings.title }}"
+            loading="lazy"
+          >
+        {% endif %}
+        
+        {% if block.settings.hover_image != blank %}
+          <img 
+            class="product-showcase__image product-showcase__image--hover" 
+            src="{{ block.settings.hover_image | img_url: '700x900' }}" 
+            alt="{{ block.settings.hover_image.alt | default: block.settings.title }}"
+            loading="lazy"
+          >
+        {% endif %}
+        
+        <div class="product-showcase__content">
+          {% if block.settings.category != blank %}
+            <div class="product-showcase__category">{{ block.settings.category }}</div>
+          {% endif %}
+          
+          {% if block.settings.title != blank %}
+            <h3 class="product-showcase__title">{{ block.settings.title }}</h3>
+          {% endif %}
+          
+          {% if block.settings.description != blank %}
+            <p class="product-showcase__description">{{ block.settings.description }}</p>
+          {% endif %}
+          
+          {% if block.settings.price != blank %}
+            <div class="product-showcase__price">${{ block.settings.price }}</div>
+          {% endif %}
+          
+          {% if block.settings.button_text != blank %}
+            <button class="product-showcase__button" onclick="{% if block.settings.button_url != blank %}window.location.href='{{ block.settings.button_url }}'{% endif %}">
+              {{ block.settings.button_text }}
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Footer Showcase",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "product_item",
+      "name": "Product Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Main Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "hover_image",
+          "label": "Hover Image (Desktop Only)"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category",
+          "default": "prep"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Product Title",
+          "default": "Product Name"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Product description"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "32.00"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "BUY NOW"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge Text (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer Showcase",
+      "blocks": [
+        {
+          "type": "product_item",
+          "settings": {
+            "category": "prep",
+            "title": "",
+            "description": "Essential skincare prep",
+            "price": "32.00",
+            "button_text": "BUY GLAZING MILK"
+          }
+        },
+        {
+          "type": "product_item",
+          "settings": {
+            "category": "case",
+            "title": "",
+            "description": "Your essentials in one place",
+            "price": "38.00",
+            "button_text": "SHOP CASE"
+          }
+        },
+        {
+          "type": "product_item",
+          "settings": {
+            "category": "seal",
+            "title": "",
+            "description": "The intensive moisture balm",
+            "price": "36.00",
+            "button_text": "BUY BUTTER"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,481 @@
+<style>
+  .hero-section {
+    position: relative;
+    width: 100%;
+    max-height: 630px;
+    height: 630px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: {{ section.settings.text_color }}!important;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+
+  .hero-heading {
+    color: {{ section.settings.text_color }}!important;
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .hero-subtext {
+    font-size: {{ section.settings.subtext_size }}px;
+    margin: 0 0 32px 0;
+    opacity: 0.9;
+    line-height: 1.4;
+  }
+
+  .hero-button {
+    display: inline-block;
+    padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+    background-color: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ section.settings.button_border_radius }}px;
+    font-size: {{ section.settings.button_text_size }}px;
+    font-weight: {{ section.settings.button_font_weight }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: {{ section.settings.button_border_width }}px solid {{ section.settings.button_border_color }};
+  }
+
+  .hero-button:hover {
+    background-color: {{ section.settings.button_hover_bg_color }};
+    color: {{ section.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+  }
+
+  .decorative-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .oval-lines {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+  }
+
+  .oval-line {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .oval-line:nth-child(2) {
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+  }
+
+  .oval-line:nth-child(3) {
+    width: 140%;
+    height: 140%;
+    top: -20%;
+    left: -20%;
+  }
+
+  .feature-label {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #333;
+  }
+
+  .label-1 {
+    top: 20%;
+    left: 15%;
+  }
+
+  .label-2 {
+    top: 15%;
+    right: 15%;
+  }
+
+  .label-3 {
+    bottom: 20%;
+    right: 10%;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .hero-section {
+      max-height: 460px;
+      height: 460px;
+    }
+
+    .hero-background.desktop {
+      display: none;
+    }
+
+    .hero-background.mobile {
+      display: block;
+    }
+
+    .hero-heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .hero-subtext {
+      font-size: {{ section.settings.subtext_size_mobile }}px;
+      margin-bottom: 24px;
+    }
+
+    .oval-lines {
+      width: 400px;
+      height: 300px;
+    }
+
+    .feature-label {
+      font-size: 10px;
+      padding: 6px 12px;
+    }
+
+    .label-1 {
+      top: 15%;
+      left: 10%;
+    }
+
+    .label-2 {
+      top: 10%;
+      right: 10%;
+    }
+
+    .label-3 {
+      bottom: 15%;
+      right: 5%;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .hero-background.mobile {
+      display: none;
+    }
+
+    .hero-background.desktop {
+      display: block;
+    }
+  }
+</style>
+
+<section class="hero-section">
+  {% if section.settings.desktop_image %}
+    <img 
+      src="{{ section.settings.desktop_image | img_url: '1920x630' }}" 
+      alt="{{ section.settings.desktop_image.alt | escape }}"
+      class="hero-background desktop"
+    >
+  {% endif %}
+  
+  {% if section.settings.mobile_image %}
+    <img 
+      src="{{ section.settings.mobile_image | img_url: '768x460' }}" 
+      alt="{{ section.settings.mobile_image.alt | escape }}"
+      class="hero-background mobile"
+    >
+  {% endif %}
+
+  {% if section.settings.show_overlay %}
+    <div class="hero-overlay"></div>
+  {% endif %}
+
+
+  <div class="hero-content">
+    {% if section.settings.heading_text != blank %}
+      <h1 class="hero-heading">{{ section.settings.heading_text }}</h1>
+    {% endif %}
+    
+    {% if section.settings.subtext != blank %}
+      <p class="hero-subtext">{{ section.settings.subtext }}</p>
+    {% endif %}
+    
+    {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+      <a href="{{ section.settings.button_url }}" class="hero-button">
+        {{ section.settings.button_text }}
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Footer Hero Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile Background Image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading Text",
+      "default": "Better Things in a Better Way"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Looking to the world's greatest innovator - Nature"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "LEARN MORE"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Font Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtext Size (Desktop)",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subtext_size_mobile",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtext Size (Mobile)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show Background Overlay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Button Styling"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button Hover Background Color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button Hover Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button Border Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Border Width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Border Radius",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Vertical Padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Horizontal Padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Text Size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Button Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "Decorative Elements"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer Hero Section"
+    }
+  ]
+}
+{% endschema %}
