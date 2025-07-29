@@ -1,0 +1,23 @@
+<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+  <p>Material: {{ section.settings.fabric }}</p>
+  {% comment %} <p>Material: {{ product.metafields.custom.fabric.value }}</p> {% endcomment %}
+
+</div>
+
+{% schema %}
+  {
+    "name": "Metafield Section",
+    "settings": [
+      {
+        "type": "text",
+        "label": "Fabric",
+        "id": "fabric"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Metafield Section"
+      }
+    ]
+  }
+{% endschema %}
