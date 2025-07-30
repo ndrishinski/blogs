@@ -1,0 +1,585 @@
+<style>
+  .product-comparison {
+    width: 100%;
+    {% comment %} height: 760px; {% endcomment %}
+    background-color: #f8f8f8;
+    padding: 40px 20px;
+    box-sizing: border-box;
+  }
+
+  .comparison-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    {% comment %} height: 680px; {% endcomment %}
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .comparison-table {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .table-header {
+    display: flex;
+    height: 200px;
+    border-bottom: 2px solid #e5e5e5;
+    flex-shrink: 0;
+  }
+
+  .header-spacer {
+    flex: 0 0 200px;
+    background-color: #f5f5f5;
+    border-right: 2px solid #e5e5e5;
+  }
+
+  .product-column-header {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+    border-right: 1px solid #e5e5e5;
+    position: relative;
+  }
+
+  .product-column-header:last-child {
+    border-right: none;
+  }
+
+  .product-column-header.selected {
+    border-left: 3px solid #333;
+    border-right: 3px solid #333;
+    border-top: 3px solid #333;
+  }
+
+  .product-column-header.selected:first-child {
+    border-left: 3px solid #333;
+  }
+
+  .product-column-header.selected:last-child {
+    border-right: 3px solid #333;
+  }
+
+  .product-image {
+    width: 120px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 15px;
+  }
+
+  .product-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+  }
+
+  .table-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .spec-row {
+    display: flex;
+    min-height: 50px;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .spec-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .spec-row:last-child {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    flex: 0 0 200px;
+    padding: 15px 20px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f5f5f5;
+    border-right: 2px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+  }
+
+  .spec-value {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #666;
+    border-right: 1px solid #e5e5e5;
+  }
+
+  .spec-value:last-child {
+    border-right: none;
+  }
+
+  .spec-value.selected {
+    border-left: 3px solid #333;
+    border-right: 3px solid #333;
+  }
+
+  .spec-value.selected:first-child {
+    border-left: 3px solid #333;
+  }
+
+  .spec-value.selected:last-child {
+    border-right: 3px solid #333;
+  }
+
+  .spec-row:last-child .spec-value.selected {
+    border-bottom: 3px solid #333;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .product-comparison {
+      height: auto;
+      min-height: 600px;
+      padding: 20px 10px;
+    }
+    
+    .comparison-container {
+      height: auto;
+      overflow-x: auto;
+    }
+    
+    .comparison-table {
+      min-width: 800px;
+    }
+    
+    .table-header {
+      height: 180px;
+    }
+    
+    .product-image {
+      width: 80px;
+      height: 60px;
+    }
+    
+    .product-name {
+      font-size: 14px;
+    }
+    
+    .spec-label {
+      flex: 0 0 150px;
+      padding: 12px 15px;
+      font-size: 14px;
+    }
+    
+    .spec-value {
+      padding: 12px 10px;
+      font-size: 14px;
+    }
+    
+    .spec-row {
+      min-height: 45px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-comparison {
+      padding: 15px 5px;
+    }
+    
+    .comparison-table {
+      min-width: 700px;
+    }
+    
+    .table-header {
+      height: 160px;
+    }
+    
+    .product-image {
+      width: 70px;
+      height: 50px;
+    }
+    
+    .product-name {
+      font-size: 12px;
+    }
+    
+    .spec-label {
+      flex: 0 0 120px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    
+    .spec-value {
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+    
+    .spec-row {
+      min-height: 40px;
+    }
+  }
+</style>
+
+<section class="product-comparison">
+  <div class="comparison-container">
+    <div class="comparison-table">
+      <!-- Header with product images and names -->
+      <div class="table-header">
+        <div class="header-spacer"></div>
+        <div class="spec-label" style="visibility: hidden;">{{ section.settings.feature_1_label }}</div>
+        {% for block in section.blocks %}
+          <div class="product-column-header {% if block.settings.is_selected %}selected{% endif %}">
+            {% if block.settings.product_image %}
+              <img src="{{ block.settings.product_image | img_url: '120x90' }}" 
+                   alt="{{ block.settings.product_name }}" 
+                   class="product-image">
+            {% endif %}
+            <div class="product-name">{{ block.settings.product_name }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Specifications table body -->
+      <div class="table-body">
+        <!-- Feature 1 Row -->
+        {% if section.settings.feature_1_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_1_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_1_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 2 Row -->
+        {% if section.settings.feature_2_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_2_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_2_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 3 Row -->
+        {% if section.settings.feature_3_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_3_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_3_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 4 Row -->
+        {% if section.settings.feature_4_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_4_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_4_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 5 Row -->
+        {% if section.settings.feature_5_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_5_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_5_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 6 Row -->
+        {% if section.settings.feature_6_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_6_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_6_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 7 Row -->
+        {% if section.settings.feature_7_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_7_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_7_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 8 Row -->
+        {% if section.settings.feature_8_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_8_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_8_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Feature 9 Row -->
+        {% if section.settings.feature_9_label != blank %}
+        <div class="spec-row">
+          <div class="spec-label">{{ section.settings.feature_9_label }}</div>
+          {% for block in section.blocks %}
+            <div class="spec-value {% if block.settings.is_selected %}selected{% endif %}">{{ block.settings.feature_9_value }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Comparison Chart",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Feature Labels"
+    },
+    {
+      "type": "text",
+      "id": "feature_1_label",
+      "label": "Feature 1 Label",
+      "default": "Motor"
+    },
+    {
+      "type": "text",
+      "id": "feature_2_label",
+      "label": "Feature 2 Label",
+      "default": "Battery"
+    },
+    {
+      "type": "text",
+      "id": "feature_3_label",
+      "label": "Feature 3 Label",
+      "default": "Gears"
+    },
+    {
+      "type": "text",
+      "id": "feature_4_label",
+      "label": "Feature 4 Label",
+      "default": "Estimated Max Range"
+    },
+    {
+      "type": "text",
+      "id": "feature_5_label",
+      "label": "Feature 5 Label",
+      "default": "Speed"
+    },
+    {
+      "type": "text",
+      "id": "feature_6_label",
+      "label": "Feature 6 Label",
+      "default": "Suspension"
+    },
+    {
+      "type": "text",
+      "id": "feature_7_label",
+      "label": "Feature 7 Label",
+      "default": "Recommended Height Use"
+    },
+    {
+      "type": "text",
+      "id": "feature_8_label",
+      "label": "Feature 8 Label",
+      "default": "Brake"
+    },
+    {
+      "type": "text",
+      "id": "feature_9_label",
+      "label": "Feature 9 Label",
+      "default": "Max Load"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_model",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Product Name",
+          "default": "Product Name"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Product Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_selected",
+          "label": "Highlight this column",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "feature_1_value",
+          "label": "Feature 1 Value",
+          "default": "Value 1"
+        },
+        {
+          "type": "text",
+          "id": "feature_2_value",
+          "label": "Feature 2 Value",
+          "default": "Value 2"
+        },
+        {
+          "type": "text",
+          "id": "feature_3_value",
+          "label": "Feature 3 Value",
+          "default": "Value 3"
+        },
+        {
+          "type": "text",
+          "id": "feature_4_value",
+          "label": "Feature 4 Value",
+          "default": "Value 4"
+        },
+        {
+          "type": "text",
+          "id": "feature_5_value",
+          "label": "Feature 5 Value",
+          "default": "Value 5"
+        },
+        {
+          "type": "text",
+          "id": "feature_6_value",
+          "label": "Feature 6 Value",
+          "default": "Value 6"
+        },
+        {
+          "type": "text",
+          "id": "feature_7_value",
+          "label": "Feature 7 Value",
+          "default": "Value 7"
+        },
+        {
+          "type": "text",
+          "id": "feature_8_value",
+          "label": "Feature 8 Value",
+          "default": "Value 8"
+        },
+        {
+          "type": "text",
+          "id": "feature_9_value",
+          "label": "Feature 9 Value",
+          "default": "Value 9"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Comparison Chart",
+      "settings": {
+        "feature_1_label": "Motor",
+        "feature_2_label": "Battery",
+        "feature_3_label": "Gears",
+        "feature_4_label": "Estimated Max Range",
+        "feature_5_label": "Speed",
+        "feature_6_label": "Suspension",
+        "feature_7_label": "Recommended Height Use",
+        "feature_8_label": "Brake",
+        "feature_9_label": "Max Load"
+      },
+      "blocks": [
+        {
+          "type": "product_model",
+          "settings": {
+            "product_name": "S6",
+            "feature_1_value": "2000W",
+            "feature_2_value": "52V 50Ah",
+            "feature_3_value": "Shimano 7 Gears",
+            "feature_4_value": "140Miles",
+            "feature_5_value": "32mph",
+            "feature_6_value": "Dual",
+            "feature_7_value": "5'5\" - 6'5\"",
+            "feature_8_value": "Hydraulic disc brake",
+            "feature_9_value": "330LBS"
+          }
+        },
+        {
+          "type": "product_model",
+          "settings": {
+            "product_name": "S8",
+            "feature_1_value": "2*1000W",
+            "feature_2_value": "48V 25Ah",
+            "feature_3_value": "Shimano 7 Gears",
+            "feature_4_value": "75Miles",
+            "feature_5_value": "35mph",
+            "feature_6_value": "Dual",
+            "feature_7_value": "5'5\" - 6'5\"",
+            "feature_8_value": "Hydraulic disc brake",
+            "feature_9_value": "330LBS"
+          }
+        },
+        {
+          "type": "product_model",
+          "settings": {
+            "product_name": "V9-G60",
+            "feature_1_value": "1000W",
+            "feature_2_value": "48V 20Ah",
+            "feature_3_value": "Shimano 7 Gears",
+            "feature_4_value": "70Miles",
+            "feature_5_value": "32mph",
+            "feature_6_value": "Dual",
+            "feature_7_value": "5'5\" - 6'5\"",
+            "feature_8_value": "Mechanical disc brake",
+            "feature_9_value": "330LBS",
+            "is_selected": true
+          }
+        },
+        {
+          "type": "product_model",
+          "settings": {
+            "product_name": "EB26",
+            "feature_1_value": "1000W",
+            "feature_2_value": "48V 15Ah",
+            "feature_3_value": "Shimano 7 Gears",
+            "feature_4_value": "60Miles",
+            "feature_5_value": "28mph",
+            "feature_6_value": "Front",
+            "feature_7_value": "5'5\" - 6'5\"",
+            "feature_8_value": "Mechanical disc brake",
+            "feature_9_value": "330LBS"
+          }
+        },
+        {
+          "type": "product_model",
+          "settings": {
+            "product_name": "ARES",
+            "feature_1_value": "2000W",
+            "feature_2_value": "52V 25AH",
+            "feature_3_value": "Shimano 7 Gears",
+            "feature_4_value": "80Miles",
+            "feature_5_value": "32mph",
+            "feature_6_value": "Dual",
+            "feature_7_value": "5'5\" - 6'5\"",
+            "feature_8_value": "Hydraulic disc brake",
+            "feature_9_value": "330LBS"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
