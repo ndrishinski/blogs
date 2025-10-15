@@ -1,0 +1,58 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const fasterDuration = 0.3;
+    const slowerDuration = .5;
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power2.out", duration: fasterDuration },
+    });
+
+    // Logo first
+    tl.from("LOGO", {
+      opacity: 0,
+      duration: slowerDuration,
+      ease: "power3.out",
+    })
+
+      .from("MOBILE-DRAWER", {
+        opacity: 0,
+        y: -20,
+      }, "-=0.15")
+
+      // Then navigation links, icons, and menu — one after another (slight overlap)
+      .from("HEADER-LINKS", {
+        opacity: 0,
+        y: -20,
+        stagger: 0.08,
+      }, "-=0.2") // start just before logo finishes
+
+      .from("HEADER-ICONS", {
+        opacity: 0,
+        y: -20,
+        stagger: 0.08
+      }, "-=0.15")
+
+      // Then hero section — starts right after nav animations
+      .from("HERO-BANNER-HEADING", {
+        opacity: 0,
+        y: 30,
+        duration: slowerDuration,
+        ease: "power2.out",
+      }, "-=0.1")
+
+      .from("HERO-BANNER-TEXT", {
+        scale: 0.8,
+        opacity: 0,
+        ease: "back.out(1.7)",
+      }, "-=0.25")
+
+      .from("HERO-BANNER-BUTTON", {
+        scale: 0.8,
+        opacity: 0,
+        ease: "back.out(1.7)",
+      }, "-=0.25");
+  });
+
+
+</script>
