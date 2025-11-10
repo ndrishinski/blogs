@@ -1,0 +1,134 @@
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const selector = '.product-grid > .grid__item'
+
+    function initAnimation() {
+      if (!window.gsap || !window.ScrollTrigger) {
+        return;
+      }
+
+      var cards = document.querySelectorAll(selector);
+      if (!cards.length) return;
+
+      window.featuredCollectionAnimations = window.featuredCollectionAnimations || {};
+      var existing = window.featuredCollectionAnimations[selector];
+      if (existing?.tweens?.length) {
+        existing.tweens.forEach(function(tween) {
+          tween.kill();
+        });
+      }
+      if (existing?.triggers?.length) {
+        existing.triggers.forEach(function(st) {
+          st.kill();
+        });
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.set(cards, { y: 60, opacity: 0.35 });
+
+      var tweens = [];
+      var triggers = [];
+
+      cards.forEach(function(card, index) {
+        var tween = gsap.fromTo(
+          card,
+          { y: 160, x: index % 2 === 0 ? 100 : -100, opacity: 0.35 },
+          {
+            y: 0,
+            x: 0,
+            opacity: 1,
+            ease: 'power3.out',
+            overwrite: 'auto',
+          scrollTrigger: {
+            trigger: card,
+              start: 'top 85%',
+              end: 'top 45%',
+              scrub: 0.6,
+              markers: false,
+              invalidateOnRefresh: true
+            }
+          }
+        );
+
+        tweens.push(tween);
+        if (tween.scrollTrigger) {
+          triggers.push(tween.scrollTrigger);
+        }
+      });
+
+      window.featuredCollectionAnimations[selector] = {
+        tweens: tweens,
+        triggers: triggers
+      };
+
+      ScrollTrigger.refresh();
+    }
+
+    function loadScript(src, dataAttr, callback) {
+      var existingScript = document.querySelector('script[' + dataAttr + ']');
+      if (existingScript) {
+        if (existingScript.dataset.loaded === 'true') {
+          callback();
+        } else {
+          existingScript.addEventListener('load', callback, { once: true });
+        }
+        return;
+      }
+
+      var script = document.createElement('script');
+      script.src = src;
+      script.defer = true;
+      script.setAttribute(dataAttr, 'true');
+      script.addEventListener('load', function() {
+        script.dataset.loaded = 'true';
+        callback();
+      }, { once: true });
+      document.head.appendChild(script);
+    }
+
+    function loadGSAP(callback) {
+      if (window.gsap && window.ScrollTrigger) {
+        callback();
+        return;
+      }
+
+      var scriptsToLoad = [];
+      if (!window.gsap) {
+        scriptsToLoad.push(function(next) {
+          loadScript(
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js',
+            'data-featured-collection-gsap',
+            next
+          );
+        });
+      }
+      if (!window.ScrollTrigger) {
+        scriptsToLoad.push(function(next) {
+          loadScript(
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js',
+            'data-featured-collection-scrolltrigger',
+            next
+          );
+        });
+      }
+
+      var remaining = scriptsToLoad.length;
+      if (!remaining) {
+        callback();
+        return;
+      }
+
+      scriptsToLoad.forEach(function(loader) {
+        loader(function() {
+          remaining -= 1;
+          if (remaining === 0) {
+            callback();
+          }
+        });
+      });
+    }
+
+    loadGSAP(initAnimation);
+  });
+</script>
