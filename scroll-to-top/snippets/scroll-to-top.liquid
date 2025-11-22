@@ -1,0 +1,72 @@
+<div id="scrollToTop" class="scroll-to-top hidden">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <path stroke="currentColor" stroke-width="2" d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+</div>
+
+<style>
+  .scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #000; /* Change for brand */
+    color: #fff; /* Change for icon color */
+    padding: 0.75rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease, transform .3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    z-index: 999;
+    border: 1px solid #fff; /* Change for border color */
+  }
+
+  .scroll-to-top.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .scroll-to-top.hidden {
+    transform: translateY(20px);
+  }
+
+  .scroll-to-top svg {
+    display: block;
+  }
+
+  @media (hover:hover) {
+    .scroll-to-top:hover {
+      background: #333;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('scrollToTop');
+
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        btn.classList.add('show');
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.remove('show');
+        btn.classList.add('hidden');
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  });
+</script>
