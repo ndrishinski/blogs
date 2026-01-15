@@ -1,0 +1,33 @@
+First prompt: Cinematic studio background, soft moving light, subtle particles, shallow depth of field. Product remains perfectly still.
+
+Second Prompt:
+Cyclic animation with no visible start or end.
+
+Studio product shot with a locked-off camera. Behind the product: animated volumetric light beams, slow moving light streaks, soft glowing particles drifting horizontally, subtle fog layers moving independently.
+
+All background motion is perfectly seamless and loopable, ending in the exact same visual state it begins. The product is completely static and perfectly sharp at all times. Camera is fixed, no zoom, no pan, no rotation.
+
+Background motion only. Cinematic lighting, high contrast, premium tech commercial style. Perfect looping animation. No camera movement. No product movement. No warping. No morphing. No scene change.
+
+
+Final Prompt:
+
+Cyclic animation with no visible start or end.
+
+Studio product shot with a locked-off camera.
+
+Behind the product: a dynamic cinematic background with rich contrast and depth. 
+Multiple layers of animated volumetric light beams, flowing light streaks, slow-moving energy waves, and drifting glowing particles.
+Soft atmospheric fog rolls gently in layered depth, with subtle color gradients and light pulses.
+
+All background motion is perfectly seamless and loopable, ending in the exact same visual state it begins.
+
+The product is completely static and perfectly sharp at all times.
+
+Camera is fixed, no zoom, no pan, no rotation.
+
+Background motion only. Cinematic lighting, high contrast, dramatic lighting, premium tech commercial style.
+
+Dark or mid-tone background with visible depth and contrast (not white).
+
+Perfect looping animation. No camera movement. No product movement. No warping. No morphing. No scene change.
