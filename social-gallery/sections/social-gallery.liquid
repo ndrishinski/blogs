@@ -1,0 +1,289 @@
+{{ 'section-social-gallery.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  #SocialGallery-{{ section.id }} {
+    max-height: 470px;
+  }
+{%- endstyle -%}
+
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="social-gallery section-{{ section.id }}-padding isolate" id="SocialGallery-{{ section.id }}">
+    <div class="page-width">
+      {%- unless section.settings.title == blank -%}
+        <div class="title-wrapper title-wrapper--no-top-margin" style="text-align: center;">
+          <h2 class="title inline-richtext {{ section.settings.heading_size }}" style="font-weight: 400;">{{ section.settings.title }}</h2>
+        </div>
+      {%- endunless -%}
+
+      <slider-component class="slider-mobile-gutter">
+        <ul
+          class="social-gallery__list slider slider--mobile"
+          id="Slider-{{ section.id }}"
+          role="list"
+        >
+          {%- for block in section.blocks -%}
+            <li
+              id="Slide-{{ section.id }}-{{ forloop.index }}"
+              class="social-gallery__item slider__slide"
+              {{ block.shopify_attributes }}
+            >
+              {%- if block.settings.product_link != blank -%}
+                <a href="{{ block.settings.product_link }}" class="social-gallery__link" aria-label="{{ block.settings.product_title | default: 'View product' }}">
+              {%- endif -%}
+              
+              <div class="social-gallery__media-wrapper">
+                {%- if block.settings.media_type == 'video' and block.settings.video != blank -%}
+                  <div class="social-gallery__media social-gallery__media--video">
+                    {{
+                      block.settings.video
+                      | video_tag:
+                        image_size: "260x345",
+                        autoplay: true,
+                        loop: true,
+                        controls: false,
+                        muted: true
+                    }}
+                  </div>
+                {%- elsif block.settings.media_type == 'image' and block.settings.image != blank -%}
+                  <div class="social-gallery__media social-gallery__media--image">
+                    {{
+                      block.settings.image
+                      | image_url: width: 520
+                      | image_tag:
+                        loading: 'lazy',
+                        width: 260,
+                        height: 345,
+                        sizes: '260px',
+                        widths: '260, 520',
+                        alt: block.settings.product_title | default: 'Social gallery image'
+                    }}
+                  </div>
+                {%- else -%}
+                  <div class="social-gallery__media social-gallery__media--placeholder">
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {%- endif -%}
+                
+                <div class="social-gallery__overlay">
+                  {%- if block.settings.product_title != blank -%}
+                    <div class="social-gallery__title">{{ block.settings.product_title }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.handle != blank -%}
+                    <div class="social-gallery__handle">@{{ block.settings.handle }}</div>
+                  {%- endif -%}
+                </div>
+              </div>
+              
+              {%- if block.settings.product_link != blank -%}
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if section.blocks.size > 1 -%}
+          <div class="slider-buttons no-js-hidden medium-hide">
+            <button
+              type="button"
+              class="slider-button slider-button--prev"
+              name="previous"
+              aria-label="{{ 'general.slider.previous_slide' | t }}"
+            >
+              {% render 'icon-caret' %}
+            </button>
+            <div class="slider-counter caption">
+              <span class="slider-counter--current">1</span>
+              <span aria-hidden="true"> / </span>
+              <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+              <span class="slider-counter--total">{{ section.blocks.size }}</span>
+            </div>
+            <button
+              type="button"
+              class="slider-button slider-button--next"
+              name="next"
+              aria-label="{{ 'general.slider.next_slide' | t }}"
+            >
+              {% render 'icon-caret' %}
+            </button>
+          </div>
+        {%- endif -%}
+      </slider-component>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Social Gallery",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "In the wild",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media_item",
+      "name": "Media item",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image",
+          "label": "Media type"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "text",
+          "id": "product_title",
+          "default": "Product title",
+          "label": "Product title"
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "default": "username",
+          "label": "Social handle (without @)"
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Gallery",
+      "blocks": [
+        {
+          "type": "media_item"
+        },
+        {
+          "type": "media_item"
+        },
+        {
+          "type": "media_item"
+        },
+        {
+          "type": "media_item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
